@@ -6,11 +6,21 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 12:03:34 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/10 17:38:19 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/10 21:07:09 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+// set the end_simulation flag to true and return 1 to indicate error.
+
+int	end_sim(t_data *data)
+{
+	safe_mutex(MUTEX_LOCK, &data->mutex, data);
+	data->end_simulation = true;
+	safe_mutex(MUTEX_UNLOCK, &data->mutex, data);
+	return (1);
+}
 
 /*
 	if philo->id is an even number, the philo starts by thinking before 
@@ -89,7 +99,7 @@ static int	prepare_simulation(t_data *data)
 	return (0);
 }
 
-int	create_threads(t_data *data)
+int	simulate(t_data *data)
 {
 	int	i;
 

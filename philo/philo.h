@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 14:10:56 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/10 17:51:55 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/10 21:07:39 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,7 +152,8 @@ int		init_data(t_data *data, char **argv);
 int		init_all_mutexes(t_data *data);
 
 // simulate.c
-int		create_threads(t_data *data);
+int		end_sim(t_data *data);
+int		simulate(t_data *data);
 
 // eat.c
 int		eat_alone(t_philo *philo);

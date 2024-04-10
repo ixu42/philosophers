@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 16:06:58 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/10 16:49:26 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/10 20:47:00 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	main(int argc, char **argv)
 		return (1);
 	if (init_data(&data, argv))
 		return (1);
-	if (create_threads(&data))
+	if (simulate(&data))
 		return (1);
 	if (clean_all(&data))
 		return (1);
