@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 17:28:52 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/09 15:36:41 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/10 16:46:11 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ long	get_time(t_time_unit time_unit, t_data *data)
 	if (gettimeofday(&tv, NULL) == -1)
 	{
 		safe_mutex(MUTEX_LOCK, &data->mutex, data);
-		safe_exit("gettimeofday error\n", data, GETTIMEOFDAY);
+		return (safe_return("gettimeofday error\n", data, GETTIMEOFDAY));
 		safe_mutex(MUTEX_UNLOCK, &data->mutex, data);
 	}
 	if (time_unit == MICROSEC)
@@ -64,18 +64,27 @@ long	get_time(t_time_unit time_unit, t_data *data)
 
 // an improved version of usleep() for better precision
 
-void	ft_usleep(long microsec, t_data *data)
+int	ft_usleep(long microsec, t_data *data)
 {
 	long	start;
+	long	current;
 
 	start = get_time(MICROSEC, data);
-	while (get_time(MICROSEC, data) - start < microsec)
+	if (start == -1)
+		return (1);
+	while (true)
 	{
+		current = get_time(MICROSEC, data);
+		if (current == -1)
+			return (1);
+		if (current - start >= microsec)
+			break ;
 		if (usleep(500) == -1)
 		{
 			safe_mutex(MUTEX_LOCK, &data->mutex, data);
-			safe_exit("usleep error\n", data, USLEEP);
+			return (safe_return("usleep error\n", data, USLEEP));
 			safe_mutex(MUTEX_UNLOCK, &data->mutex, data);
 		}
 	}
+	return (0);
 }

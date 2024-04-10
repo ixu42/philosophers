@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 14:10:56 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/09 21:59:56 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/10 17:51:55 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 // printf
 # include <stdio.h>
 
-// malloc, free, EXIT_FAILURE, EXIT_SUCCESS
+// malloc, free
 # include <stdlib.h>
 
 // INT_MAX, INT_MIN
@@ -34,11 +34,17 @@
 // gettimeofday
 # include <sys/time.h>
 
+// macros for error handling
 # define USAGE "Usage: ./philo [num_of_philos] [time_to_die] [time_to_eat] \
 [time_to_sleep] [num_of_times_each_philo_must_eat](optional)\n"
+# define ERR_CREATE "pthread_create error\n"
+# define ERR_JOIN "pthread_join error\n"
+# define ERR_MUTEX_LOCK "pthread_mutex_lock error\n"
+# define ERR_MUTEX_UNLOCK "pthread_mutex_unlock error\n"
+# define ERR_MUTEX_DESTROY "pthread_mutex_destroy error\n"
 
 // macros for debugging purpose
-# define DEBUG_MODE false
+# define DEBUG_MODE 0
 # define GREEN "\033[0;32m"
 # define RED "\033[0;31m"
 # define END "\033[0m"
@@ -70,8 +76,7 @@ typedef enum e_time_unit
 
 /* 
 	for handling function errors, ex. typically pthread or mutex related
-	functions a non-zero return value indicates error. SUCCESS is used when
-	the program is executed successfully.
+	functions a non-zero return value indicates error.
 */
 
 typedef enum e_func
@@ -82,8 +87,7 @@ typedef enum e_func
 	MUTEX_UNLOCK,
 	MUTEX_DESTROY,
 	GETTIMEOFDAY,
-	USLEEP,
-	SUCCESS
+	USLEEP
 }	t_func;
 
 // mutex: for coordinating data accesses between the philo and the monitor
@@ -133,36 +137,38 @@ struct s_data
 	t_philo		*philos;
 };
 
-// validate.c
-int		validate_input(int argc, char **argv);
-
 // utils.c
 int		ft_isdigit(int c);
 size_t	ft_strlen(const char *s);
 int		ft_putstr_fd(char *s, int fd);
 long	get_time(t_time_unit time_unit, t_data *data);
-void	ft_usleep(long microsec, t_data *data);
+int		ft_usleep(long microsec, t_data *data);
 
 // ft_atol.c
 long	ft_atol(char *str);
 
 // init.c
-void	init_data(t_data *data, char **argv);
-void	init_all_mutexes(t_data *data);
+int		init_data(t_data *data, char **argv);
+int		init_all_mutexes(t_data *data);
 
 // simulate.c
 int		create_threads(t_data *data);
+
+// eat.c
+int		eat_alone(t_philo *philo);
+int		eat(t_philo *philo);
 
 // monitor.c
 void	*monitoring(void *arg);
 
 // print.c
-void	print_state(t_state state, t_philo *philo, t_bool debug_mode);
+int		print_state(t_state state, t_philo *philo, t_bool debug_mode);
 
 // safe_func.c
-int		safe_exit(char *err_msg, t_data *data, t_func func);
-void	safe_pthread(t_func func, pthread_t *thread,
+int		destroy_all_mutexes(t_data *data);
+int		safe_return(char *err_msg, t_data *data, t_func func);
+int		safe_pthread(t_func func, pthread_t *thread,
 			void *(*routine)(void *), void *arg);
-void	safe_mutex(t_func func, t_mutex *mutex, t_data *data);
+int		safe_mutex(t_func func, t_mutex *mutex, t_data *data);
 
 #endif

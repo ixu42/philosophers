@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 10:59:28 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/09 14:38:24 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/10 17:12:29 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,15 @@ static void	print_state_debug(t_state state, t_philo *philo, long time)
 	}
 }
 
-void	print_state(t_state state, t_philo *philo, t_bool debug_mode)
+int	print_state(t_state state, t_philo *philo, t_bool debug_mode)
 {
 	long	time;
 
-	safe_mutex(MUTEX_LOCK, &philo->data->mutex, philo->data);
+	if (safe_mutex(MUTEX_LOCK, &philo->data->mutex, philo->data))
+		return (1);
 	time = get_time(MILLISEC, philo->data) - philo->data->sim_start_time;
+	if (time == -1)
+		return (1);
 	if (debug_mode)
 		print_state_debug(state, philo, time);
 	else if (!debug_mode && !philo->data->end_simulation)
@@ -61,5 +64,7 @@ void	print_state(t_state state, t_philo *philo, t_bool debug_mode)
 		else if (state == DIED)
 			printf("%ld %d died\n", time, philo->id);
 	}
-	safe_mutex(MUTEX_UNLOCK, &philo->data->mutex, philo->data);
+	if (safe_mutex(MUTEX_UNLOCK, &philo->data->mutex, philo->data))
+		return (1);
+	return (0);
 }

@@ -6,7 +6,7 @@
 #    By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/27 16:32:21 by ixu               #+#    #+#              #
-#    Updated: 2024/04/09 21:52:27 by ixu              ###   ########.fr        #
+#    Updated: 2024/04/10 17:56:35 by ixu              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,6 +16,7 @@ NAME := philo
 # Compiler and flags
 CC := cc
 CFLAGS := -Wall -Wextra -Werror
+DEBUG := -fsanitize=thread
 
 # Color scheme
 BRIGHT_YELLOW := \033[0;93m
@@ -27,11 +28,11 @@ OBJS_DIR := objs/
 
 # Source file names
 SRCS := main.c \
-		validate.c \
 		utils.c \
 		ft_atol.c \
 		init.c \
 		simulate.c \
+		eat.c \
 		monitor.c \
 		print.c \
 		safe_funcs.c
