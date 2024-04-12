@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 10:59:28 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/12 10:36:49 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/12 16:34:18 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,21 @@
 
 static void	print_state_debug(t_state state, t_philo *philo, long time)
 {
-	int	l_fork;
-	int	r_fork;
+	int	fork1;
+	int	fork2;
 	int	philo_idx;
 	int	philo_count;
 
 	philo_idx = philo->id - 1;
 	philo_count = philo->data->philo_count;
-	l_fork = philo_idx;
-	r_fork = (philo_idx - 1 + philo_count) % philo_count;
+	fork1 = philo_idx;
+	fork2 = (philo_idx - 1 + philo_count) % philo_count;
 	if (!sim_ended(philo))
 	{
-		if (state == TOOK_LEFT_FORK)
-			printf("%-5ld %d has taken fork[%d]\n", time, philo->id, l_fork);
-		else if (state == TOOK_RIGHT_FORK)
-			printf("%-5ld %d has taken fork[%d]\n", time, philo->id, r_fork);
+		if (state == TOOK_1ST_FORK)
+			printf("%-5ld %d has taken fork[%d]\n", time, philo->id, fork1);
+		else if (state == TOOK_2ND_FORK)
+			printf("%-5ld %d has taken fork[%d]\n", time, philo->id, fork2);
 		else if (state == EATING)
 			printf("%s%-5ld %d is eating%s\n", GREEN, time, philo->id, END);
 		else if (state == SLEEPING)
@@ -53,7 +53,7 @@ int	print_state(t_state state, t_philo *philo, t_bool debug_mode)
 		print_state_debug(state, philo, time);
 	else if (!debug_mode && !sim_ended(philo))
 	{
-		if (state == TOOK_LEFT_FORK || state == TOOK_RIGHT_FORK)
+		if (state == TOOK_1ST_FORK || state == TOOK_2ND_FORK)
 			printf("%ld %d has taken a fork\n", time, philo->id);
 		else if (state == EATING)
 			printf("%ld %d is eating\n", time, philo->id);

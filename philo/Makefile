@@ -6,7 +6,7 @@
 #    By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/27 16:32:21 by ixu               #+#    #+#              #
-#    Updated: 2024/04/12 14:32:01 by ixu              ###   ########.fr        #
+#    Updated: 2024/04/12 16:47:24 by ixu              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,7 +30,8 @@ OBJS_DIR := objs/
 SRCS := main.c \
 		utils.c \
 		ft_atol.c \
-		init.c \
+		init_data.c \
+		init_mutex.c \
 		simulate.c \
 		eat.c \
 		monitor.c \
@@ -52,8 +53,8 @@ $(NAME): $(OBJS_DIR) $(OBJS)
 debug: .debug
 
 .debug: $(OBJS_DIR) $(OBJS)
-	@cc -o $(NAME) $(OBJS) $(DEBUG)
-	@echo "$(BRIGHT_YELLOW)Built $(NAME) for debugging$(RESET)"
+	@cc -o philo_debug $(OBJS) $(DEBUG)
+	@echo "$(BRIGHT_YELLOW)Built philo_debug$(RESET)"
 	@touch .debug
 
 $(OBJS_DIR):
@@ -69,7 +70,7 @@ clean:
 	@echo "$(YELLOW)Removed $(OBJS_DIR) directory and object files$(RESET)"
  
 fclean: clean
-	@rm -f $(NAME)
-	@echo "$(YELLOW)Removed $(NAME)$(RESET)"
+	@rm -f $(NAME) philo_debug
+	@echo "$(YELLOW)Removed executable(s)$(RESET)"
 
 re: fclean all

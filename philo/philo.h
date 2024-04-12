@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 14:10:56 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/12 14:02:54 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/12 16:48:18 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,8 @@ typedef enum e_bool
 
 typedef enum e_state
 {
-	TOOK_LEFT_FORK,
-	TOOK_RIGHT_FORK,
+	TOOK_1ST_FORK,
+	TOOK_2ND_FORK,
 	EATING,
 	SLEEPING,
 	THINKING,
@@ -98,8 +98,8 @@ typedef struct s_philo
 	int			id;
 	int			meals_eaten;
 	long		last_meal_time;
-	t_mutex		*left_fork;
-	t_mutex		*right_fork;
+	t_mutex		*first_fork;
+	t_mutex		*second_fork;
 	t_mutex		mutex;
 	t_data		*data;
 }	t_philo;
@@ -149,8 +149,10 @@ int		ft_usleep(long microsec, t_data *data);
 // ft_atol.c
 long	ft_atol(char *str);
 
-// init.c
+// init_data.c
 int		init_data(t_data *data, char **argv);
+
+// init_mutex.c
 int		init_all_mutexes(t_data *data);
 
 // simulate.c
