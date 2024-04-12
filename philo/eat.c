@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 17:07:39 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/10 21:06:56 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/12 10:39:25 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static int	take_forks(t_philo *philo)
 {
 	if (safe_mutex(MUTEX_LOCK, philo->left_fork, philo->data))
 		return (end_sim(philo->data));
-	if (philo->data->end_simulation)
+	if (sim_ended(philo))
 	{
 		safe_mutex(MUTEX_UNLOCK, philo->left_fork, philo->data);
 		return (0);
@@ -25,7 +25,7 @@ static int	take_forks(t_philo *philo)
 		return (end_sim(philo->data));
 	if (safe_mutex(MUTEX_LOCK, philo->right_fork, philo->data))
 		return (end_sim(philo->data));
-	if (philo->data->end_simulation)
+	if (sim_ended(philo))
 	{
 		safe_mutex(MUTEX_UNLOCK, philo->left_fork, philo->data);
 		safe_mutex(MUTEX_UNLOCK, philo->right_fork, philo->data);
@@ -38,21 +38,13 @@ static int	take_forks(t_philo *philo)
 
 static int	eating(t_philo *philo)
 {
-	if (safe_mutex(MUTEX_LOCK, &philo->mutex, philo->data))
-		return (end_sim(philo->data));
-	philo->last_meal_time = get_time(MICROSEC, philo->data);
-	if (philo->last_meal_time == -1)
-		return (end_sim(philo->data));
-	if (safe_mutex(MUTEX_UNLOCK, &philo->mutex, philo->data))
+	if (set_last_meal_time(philo))
 		return (end_sim(philo->data));
 	if (print_state(EATING, philo, DEBUG_MODE))
 		return (end_sim(philo->data));
-	if (ft_usleep(philo->data->time_to_eat, philo->data))
+	if (ft_usleep(get_time_to_eat(philo), philo->data))
 		return (end_sim(philo->data));
-	if (safe_mutex(MUTEX_LOCK, &philo->mutex, philo->data))
-		return (end_sim(philo->data));
-	philo->meals_eaten++;
-	if (safe_mutex(MUTEX_UNLOCK, &philo->mutex, philo->data))
+	if (increment_meal_counter(philo))
 		return (end_sim(philo->data));
 	return (0);
 }
@@ -70,7 +62,7 @@ int	eat(t_philo *philo)
 {
 	if (take_forks(philo))
 		return (1);
-	if (philo->data->end_simulation)
+	if (sim_ended(philo))
 		return (0);
 	if (eating(philo))
 		return (1);
@@ -89,7 +81,7 @@ int	eat_alone(t_philo *philo)
 {
 	if (print_state(TOOK_LEFT_FORK, philo, DEBUG_MODE))
 		return (end_sim(philo->data));
-	if (ft_usleep(philo->data->time_to_die, philo->data))
+	if (ft_usleep(get_time_to_die(philo->data), philo->data))
 		return (end_sim(philo->data));
 	return (0);
 }

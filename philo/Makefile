@@ -6,7 +6,7 @@
 #    By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/27 16:32:21 by ixu               #+#    #+#              #
-#    Updated: 2024/04/10 17:56:35 by ixu              ###   ########.fr        #
+#    Updated: 2024/04/12 10:33:53 by ixu              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,6 +35,9 @@ SRCS := main.c \
 		eat.c \
 		monitor.c \
 		print.c \
+		getters_1.c \
+		getters_2.c \
+		setters.c \
 		safe_funcs.c
 
 # Object files with paths
@@ -43,7 +46,7 @@ OBJS := $(addprefix $(OBJS_DIR), $(SRCS:.c=.o))
 all: $(NAME)
 
 $(NAME): $(OBJS_DIR) $(OBJS)
-	@cc -o $(NAME) $(OBJS)
+	@cc -o $(NAME) $(OBJS) $(DEBUG)
 	@echo "$(BRIGHT_YELLOW)Built $(NAME)$(COLOR_END)"
 
 $(OBJS_DIR):

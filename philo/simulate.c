@@ -6,21 +6,11 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 12:03:34 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/10 21:07:09 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/12 10:35:45 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-// set the end_simulation flag to true and return 1 to indicate error.
-
-int	end_sim(t_data *data)
-{
-	safe_mutex(MUTEX_LOCK, &data->mutex, data);
-	data->end_simulation = true;
-	safe_mutex(MUTEX_UNLOCK, &data->mutex, data);
-	return (1);
-}
 
 /*
 	if philo->id is an even number, the philo starts by thinking before 
@@ -34,7 +24,7 @@ static int	arrange_eating(t_philo *philo)
 	{
 		if (print_state(THINKING, philo, DEBUG_MODE))
 			return (1);
-		if (ft_usleep(philo->data->time_to_eat / 2, philo->data))
+		if (ft_usleep(get_time_to_eat(philo) / 2, philo->data))
 			return (1);
 	}
 	return (0);
@@ -52,21 +42,21 @@ static void	*routine(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	while (!philo->data->start_simulation)
+	while (!sim_started(philo->data))
 		;
 	if (arrange_eating(philo))
 		return (NULL);
-	while (!philo->data->end_simulation)
+	while (!sim_ended(philo))
 	{
-		if (philo->data->philo_count == 1)
+		if (get_philo_count(philo->data) == 1)
 			eat_alone(philo);
 		else
 			eat(philo);
-		if (philo->data->end_simulation)
+		if (sim_ended(philo))
 			break ;
 		if (print_state(SLEEPING, philo, DEBUG_MODE))
 			break ;
-		if (ft_usleep(philo->data->time_to_sleep, philo->data))
+		if (ft_usleep(get_time_to_sleep(philo), philo->data))
 			break ;
 		if (print_state(THINKING, philo, DEBUG_MODE))
 			break ;
@@ -119,7 +109,7 @@ int	simulate(t_data *data)
 	if (safe_pthread(JOIN, &data->monitor, NULL, data))
 		return (1);
 	i = -1;
-	while (++i < data->philo_count)
+	while (++i < get_philo_count(data))
 	{
 		if (safe_pthread(JOIN, &data->philos[i].thread, NULL, &data->philos[i]))
 			return (1);

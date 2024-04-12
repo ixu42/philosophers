@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 14:10:56 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/10 21:07:39 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/12 14:02:54 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,7 @@ typedef struct s_philo
 	monitor: a thread continuously checking if the simulation should end
 	mutex: for coordinating data accesses by different threads (incl. philos 
 			and monitor)
+	write: for coordinating printing state messages by different threads
 	*forks: a pointer to an array of forks(mutexes)
 	*philos: a pointer to an array of philos(threads)
 */
@@ -133,6 +134,7 @@ struct s_data
 	t_bool		end_simulation;
 	pthread_t	monitor;
 	t_mutex		mutex;
+	t_mutex		write;
 	t_mutex		*forks;
 	t_philo		*philos;
 };
@@ -152,7 +154,6 @@ int		init_data(t_data *data, char **argv);
 int		init_all_mutexes(t_data *data);
 
 // simulate.c
-int		end_sim(t_data *data);
 int		simulate(t_data *data);
 
 // eat.c
@@ -165,7 +166,27 @@ void	*monitoring(void *arg);
 // print.c
 int		print_state(t_state state, t_philo *philo, t_bool debug_mode);
 
-// safe_func.c
+/*
+	the functions to prevent data races for read and write operations
+	for data accessed by multiple threads concurrently.
+*/
+// getters_1.c
+t_bool	sim_ended(t_philo *philo);
+t_bool	sim_started(t_data *data);
+long	get_meals_eaten(t_philo *philo);
+long	get_last_meal_time(t_philo *philo);
+// getters_2.c
+long	get_philo_count(t_data *data);
+long	get_time_to_eat(t_philo *philo);
+long	get_time_to_sleep(t_philo *philo);
+long	get_time_to_die(t_data *data);
+// setters.c
+int		set_last_meal_time(t_philo *philo);
+int		increment_meal_counter(t_philo *philo);
+void	set_end_sim(t_data *data);
+int		end_sim(t_data *data);
+
+// safe_funcs.c
 int		destroy_all_mutexes(t_data *data);
 int		safe_return(char *err_msg, t_data *data, t_func func);
 int		safe_pthread(t_func func, pthread_t *thread,

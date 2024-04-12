@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 09:53:05 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/10 16:57:16 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/12 14:16:59 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ int	destroy_all_mutexes(t_data *data)
 	int	i;
 
 	if (safe_mutex(MUTEX_DESTROY, &data->mutex, data))
+		return (1);
+	if (safe_mutex(MUTEX_DESTROY, &data->write, data))
 		return (1);
 	i = -1;
 	while (++i < data->philo_count)

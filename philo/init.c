@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 09:16:09 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/10 16:36:16 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/12 14:16:10 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,14 +67,6 @@ int	init_data(t_data *data, char **argv)
 	return (0);
 }
 
-static int	safe_ret_for_mutex_init(t_data *data)
-{
-	ft_putstr_fd("pthread_mutex_init error\n", 2);
-	free(data->philos);
-	free(data->forks);
-	return (1);
-}
-
 static int	init_forks(t_data *data)
 {
 	int	i;
@@ -90,20 +82,22 @@ static int	init_forks(t_data *data)
 			j = -1;
 			while (++j < i)
 				safe_mutex(MUTEX_DESTROY, &data->forks[j], data);
-			return (safe_ret_for_mutex_init(data));
+			safe_mutex(MUTEX_DESTROY, &data->mutex, data);
+			safe_mutex(MUTEX_DESTROY, &data->write, data);
+			ft_putstr_fd("pthread_mutex_init error\n", 2);
+			free(data->philos);
+			free(data->forks);
+			return (1);
 		}
 	}
 	return (0);
 }
 
-int	init_all_mutexes(t_data *data)
+static int	init_philo_mutex(t_data *data)
 {
 	int	i;
 	int	j;
 
-	if (pthread_mutex_init(&data->mutex, NULL) != 0)
-		return (safe_ret_for_mutex_init(data));
-	init_forks(data);
 	i = -1;
 	while (++i < data->philo_count)
 	{
@@ -111,9 +105,41 @@ int	init_all_mutexes(t_data *data)
 		{
 			j = -1;
 			while (++j < i)
-				safe_mutex(MUTEX_DESTROY, &data->philos[i].mutex, data);
-			return (safe_ret_for_mutex_init(data));
+				safe_mutex(MUTEX_DESTROY, &data->philos[j].mutex, data);
+			j = -1;
+			while (++j < data->philo_count)
+				safe_mutex(MUTEX_DESTROY, &data->forks[j], data);
+			safe_mutex(MUTEX_DESTROY, &data->mutex, data);
+			safe_mutex(MUTEX_DESTROY, &data->write, data);
+			ft_putstr_fd("pthread_mutex_init error\n", 2);
+			free(data->philos);
+			free(data->forks);
+			return (1);
 		}
 	}
+	return (0);
+}
+
+int	init_all_mutexes(t_data *data)
+{
+	if (pthread_mutex_init(&data->mutex, NULL) != 0)
+	{
+		ft_putstr_fd("pthread_mutex_init error\n", 2);
+		free(data->philos);
+		free(data->forks);
+		return (1);
+	}
+	if (pthread_mutex_init(&data->write, NULL) != 0)
+	{
+		safe_mutex(MUTEX_DESTROY, &data->mutex, data);
+		ft_putstr_fd("pthread_mutex_init error\n", 2);
+		free(data->philos);
+		free(data->forks);
+		return (1);
+	}
+	if (init_forks(data))
+		return (1);
+	if (init_philo_mutex(data))
+		return (1);
 	return (0);
 }

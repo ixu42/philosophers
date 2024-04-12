@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 10:59:28 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/10 17:12:29 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/12 10:36:49 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static void	print_state_debug(t_state state, t_philo *philo, long time)
 	philo_count = philo->data->philo_count;
 	l_fork = philo_idx;
 	r_fork = (philo_idx - 1 + philo_count) % philo_count;
-	if (!philo->data->end_simulation)
+	if (!sim_ended(philo))
 	{
 		if (state == TOOK_LEFT_FORK)
 			printf("%-5ld %d has taken fork[%d]\n", time, philo->id, l_fork);
@@ -44,14 +44,14 @@ int	print_state(t_state state, t_philo *philo, t_bool debug_mode)
 {
 	long	time;
 
-	if (safe_mutex(MUTEX_LOCK, &philo->data->mutex, philo->data))
+	if (safe_mutex(MUTEX_LOCK, &philo->data->write, philo->data))
 		return (1);
 	time = get_time(MILLISEC, philo->data) - philo->data->sim_start_time;
 	if (time == -1)
 		return (1);
 	if (debug_mode)
 		print_state_debug(state, philo, time);
-	else if (!debug_mode && !philo->data->end_simulation)
+	else if (!debug_mode && !sim_ended(philo))
 	{
 		if (state == TOOK_LEFT_FORK || state == TOOK_RIGHT_FORK)
 			printf("%ld %d has taken a fork\n", time, philo->id);
@@ -64,7 +64,7 @@ int	print_state(t_state state, t_philo *philo, t_bool debug_mode)
 		else if (state == DIED)
 			printf("%ld %d died\n", time, philo->id);
 	}
-	if (safe_mutex(MUTEX_UNLOCK, &philo->data->mutex, philo->data))
+	if (safe_mutex(MUTEX_UNLOCK, &philo->data->write, philo->data))
 		return (1);
 	return (0);
 }
