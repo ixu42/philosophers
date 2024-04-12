@@ -6,7 +6,7 @@
 #    By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/27 16:32:21 by ixu               #+#    #+#              #
-#    Updated: 2024/04/12 10:33:53 by ixu              ###   ########.fr        #
+#    Updated: 2024/04/12 14:32:01 by ixu              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ DEBUG := -fsanitize=thread
 # Color scheme
 BRIGHT_YELLOW := \033[0;93m
 YELLOW := \033[0;33m
-COLOR_END := \033[0m
+RESET := \033[0m
 
 # Directories
 OBJS_DIR := objs/
@@ -46,23 +46,30 @@ OBJS := $(addprefix $(OBJS_DIR), $(SRCS:.c=.o))
 all: $(NAME)
 
 $(NAME): $(OBJS_DIR) $(OBJS)
+	@cc -o $(NAME) $(OBJS)
+	@echo "$(BRIGHT_YELLOW)Built $(NAME)$(RESET)"
+
+debug: .debug
+
+.debug: $(OBJS_DIR) $(OBJS)
 	@cc -o $(NAME) $(OBJS) $(DEBUG)
-	@echo "$(BRIGHT_YELLOW)Built $(NAME)$(COLOR_END)"
+	@echo "$(BRIGHT_YELLOW)Built $(NAME) for debugging$(RESET)"
+	@touch .debug
 
 $(OBJS_DIR):
 	@mkdir $(OBJS_DIR)
-	@echo "$(YELLOW)Built object directory$(COLOR_END)"
+	@echo "$(YELLOW)Built object directory$(RESET)"
 
 $(OBJS_DIR)%.o: $(SRCS_DIR)%.c
 	@cc $(CFLAGS) -c $< -o $@
-	@echo "$(YELLOW)Built $@$(COLOR_END)"
+	@echo "$(YELLOW)Built $@$(RESET)"
 
 clean:
-	@rm -fr $(OBJS_DIR)
-	@echo "$(YELLOW)Removed $(OBJS_DIR) directory and object files$(COLOR_END)"
+	@rm -fr $(OBJS_DIR) .debug
+	@echo "$(YELLOW)Removed $(OBJS_DIR) directory and object files$(RESET)"
  
 fclean: clean
 	@rm -f $(NAME)
-	@echo "$(YELLOW)Removed $(NAME)$(COLOR_END)"
+	@echo "$(YELLOW)Removed $(NAME)$(RESET)"
 
 re: fclean all
