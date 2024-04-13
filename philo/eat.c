@@ -6,55 +6,63 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 17:07:39 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/12 16:48:17 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/13 15:04:07 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+static int	drop_forks(t_philo *philo, t_fork fork_to_drop)
+{
+	if (DEBUG_MODE)
+		return (drop_forks_debug(philo, fork_to_drop));
+	if (fork_to_drop == DROP_FORK_1)
+	{
+		if (safe_mutex(MUTEX_UNLOCK, philo->first_fork, philo->data))
+			return (end_sim(philo, DROP_NONE));
+	}
+	else if (fork_to_drop == DROP_FORK_2)
+	{
+		if (safe_mutex(MUTEX_UNLOCK, philo->second_fork, philo->data))
+			return (end_sim(philo, DROP_NONE));
+	}
+	else if (fork_to_drop == DROP_BOTH)
+	{
+		if (safe_mutex(MUTEX_UNLOCK, philo->first_fork, philo->data))
+			return (end_sim(philo, DROP_NONE));
+		if (safe_mutex(MUTEX_UNLOCK, philo->second_fork, philo->data))
+			return (end_sim(philo, DROP_NONE));
+	}
+	return (0);
+}
+
 static int	take_forks(t_philo *philo)
 {
 	if (safe_mutex(MUTEX_LOCK, philo->first_fork, philo->data))
-		return (end_sim(philo->data));
+		return (end_sim(philo, DROP_NONE));
+	if (print_state(TOOK_1ST_FORK, philo))
+		return (end_sim(philo, DROP_FORK_1));
 	if (sim_ended(philo))
-	{
-		safe_mutex(MUTEX_UNLOCK, philo->first_fork, philo->data);
-		return (0);
-	}
-	if (print_state(TOOK_1ST_FORK, philo, DEBUG_MODE))
-		return (end_sim(philo->data));
+		return (drop_forks(philo, DROP_FORK_1));
 	if (safe_mutex(MUTEX_LOCK, philo->second_fork, philo->data))
-		return (end_sim(philo->data));
+		return (end_sim(philo, DROP_FORK_1));
+	if (print_state(TOOK_2ND_FORK, philo))
+		return (end_sim(philo, DROP_BOTH));
 	if (sim_ended(philo))
-	{
-		safe_mutex(MUTEX_UNLOCK, philo->first_fork, philo->data);
-		safe_mutex(MUTEX_UNLOCK, philo->second_fork, philo->data);
-		return (0);
-	}
-	if (print_state(TOOK_2ND_FORK, philo, DEBUG_MODE))
-		return (end_sim(philo->data));
+		return (drop_forks(philo, DROP_BOTH));
 	return (0);
 }
 
 static int	eating(t_philo *philo)
 {
 	if (set_last_meal_time(philo))
-		return (end_sim(philo->data));
-	if (print_state(EATING, philo, DEBUG_MODE))
-		return (end_sim(philo->data));
+		return (end_sim(philo, DROP_BOTH));
+	if (print_state(EATING, philo))
+		return (end_sim(philo, DROP_BOTH));
 	if (ft_usleep(get_time_to_eat(philo), philo->data))
-		return (end_sim(philo->data));
+		return (end_sim(philo, DROP_BOTH));
 	if (increment_meal_counter(philo))
-		return (end_sim(philo->data));
-	return (0);
-}
-
-static int	release_forks(t_philo *philo)
-{
-	if (safe_mutex(MUTEX_UNLOCK, philo->first_fork, philo->data))
-		return (end_sim(philo->data));
-	if (safe_mutex(MUTEX_UNLOCK, philo->second_fork, philo->data))
-		return (end_sim(philo->data));
+		return (end_sim(philo, DROP_BOTH));
 	return (0);
 }
 
@@ -66,7 +74,7 @@ int	eat(t_philo *philo)
 		return (0);
 	if (eating(philo))
 		return (1);
-	if (release_forks(philo))
+	if (drop_forks(philo, DROP_BOTH))
 		return (1);
 	return (0);
 }
@@ -79,9 +87,9 @@ int	eat(t_philo *philo)
 
 int	eat_alone(t_philo *philo)
 {
-	if (print_state(TOOK_1ST_FORK, philo, DEBUG_MODE))
-		return (end_sim(philo->data));
+	if (print_state(TOOK_1ST_FORK, philo))
+		return (end_sim(philo, DROP_NONE));
 	if (ft_usleep(get_time_to_die(philo->data), philo->data))
-		return (end_sim(philo->data));
+		return (end_sim(philo, DROP_NONE));
 	return (0);
 }

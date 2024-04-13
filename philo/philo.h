@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 14:10:56 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/12 16:48:18 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/13 14:59:01 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,10 @@
 # define ERR_MUTEX_UNLOCK "pthread_mutex_unlock error\n"
 # define ERR_MUTEX_DESTROY "pthread_mutex_destroy error\n"
 
-// macros for debugging purpose
+/*
+	macros for debugging purpose
+	change DEBUG_MODE to 1 to print more informative state messages
+*/
 # define DEBUG_MODE 0
 # define GREEN "\033[0;32m"
 # define RED "\033[0;31m"
@@ -62,11 +65,27 @@ typedef enum e_state
 {
 	TOOK_1ST_FORK,
 	TOOK_2ND_FORK,
+	DROPPED_1ST_FORK,
+	DROPPED_2ND_FORK,
 	EATING,
 	SLEEPING,
 	THINKING,
 	DIED
 }	t_state;
+
+/*
+	for unlocking the locked forks when (1) philos finish eating, or
+	(2) end_simulation flag is set to true, i.e. a philo died or all 
+	philos full, or (3) function call error occurs.
+*/
+
+typedef enum e_fork
+{
+	DROP_FORK_1,
+	DROP_FORK_2,
+	DROP_BOTH,
+	DROP_NONE
+}	t_fork;
 
 typedef enum e_time_unit
 {
@@ -166,7 +185,7 @@ int		eat(t_philo *philo);
 void	*monitoring(void *arg);
 
 // print.c
-int		print_state(t_state state, t_philo *philo, t_bool debug_mode);
+int		print_state(t_state state, t_philo *philo);
 
 /*
 	the functions to prevent data races for read and write operations
@@ -186,7 +205,7 @@ long	get_time_to_die(t_data *data);
 int		set_last_meal_time(t_philo *philo);
 int		increment_meal_counter(t_philo *philo);
 void	set_end_sim(t_data *data);
-int		end_sim(t_data *data);
+int		end_sim(t_philo *philo, t_fork fork_to_drop);
 
 // safe_funcs.c
 int		destroy_all_mutexes(t_data *data);
@@ -194,5 +213,10 @@ int		safe_return(char *err_msg, t_data *data, t_func func);
 int		safe_pthread(t_func func, pthread_t *thread,
 			void *(*routine)(void *), void *arg);
 int		safe_mutex(t_func func, t_mutex *mutex, t_data *data);
+
+// debug_utils.c
+void	print_state_debug(t_state state, t_philo *philo, long time);
+int		drop_forks_debug(t_philo *philo, t_fork fork_to_drop);
+int		end_sim_debug(t_philo *philo, t_fork fork_to_drop);
 
 #endif

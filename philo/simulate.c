@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 12:03:34 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/12 10:35:45 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/13 15:00:25 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static int	arrange_eating(t_philo *philo)
 {
 	if (philo->id % 2 == 0)
 	{
-		if (print_state(THINKING, philo, DEBUG_MODE))
+		if (print_state(THINKING, philo))
 			return (1);
 		if (ft_usleep(get_time_to_eat(philo) / 2, philo->data))
 			return (1);
@@ -54,11 +54,11 @@ static void	*routine(void *arg)
 			eat(philo);
 		if (sim_ended(philo))
 			break ;
-		if (print_state(SLEEPING, philo, DEBUG_MODE))
+		if (print_state(SLEEPING, philo))
 			break ;
 		if (ft_usleep(get_time_to_sleep(philo), philo->data))
 			break ;
-		if (print_state(THINKING, philo, DEBUG_MODE))
+		if (print_state(THINKING, philo))
 			break ;
 	}
 	return (NULL);

@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 14:45:29 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/12 14:00:08 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/13 14:58:49 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,8 @@ static int	check(t_data *data, t_philo *philo, t_bool *a_philo_died)
 		return (-1);
 	if (current_time - last_meal_time > get_time_to_die(data))
 	{
-		if (print_state(DIED, philo, DEBUG_MODE))
+		set_end_sim(data);
+		if (print_state(DIED, philo))
 			return (-1);
 		return (set_flag(a_philo_died, true));
 	}
@@ -93,6 +94,7 @@ static int	if_all_philos_full(t_data *data, t_bool *all_philos_full)
 		}
 	}
 	*all_philos_full = true;
+	set_end_sim(data);
 	return (0);
 }
 
@@ -114,10 +116,7 @@ void	*monitoring(void *arg)
 			return (NULL);
 		}
 		if (a_philo_died || all_philos_full)
-		{
-			set_end_sim(data);
 			break ;
-		}
 	}
 	return (NULL);
 }

@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 09:53:05 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/12 14:16:59 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/13 13:51:21 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,13 @@ int	destroy_all_mutexes(t_data *data)
 	1. print error messages to stderr
 	2. destroy all mutexes in certain cases
 	3. free all memory allocated on the heap
+	(this func is only invoked when func call error occurs)
 */
 
 int	safe_return(char *err_msg, t_data *data, t_func func)
 {
 	ft_putstr_fd(err_msg, 2);
-	if (err_msg == NULL || func == CREATE || func == JOIN
+	if (func == CREATE || func == JOIN
 		|| func == MUTEX_LOCK || func == MUTEX_UNLOCK)
 	{
 		if (destroy_all_mutexes(data))

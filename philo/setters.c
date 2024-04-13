@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 10:30:26 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/12 13:28:19 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/13 14:55:25 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,27 @@ void	set_end_sim(t_data *data)
 	safe_mutex(MUTEX_UNLOCK, &data->mutex, data);
 }
 
-// set the end_simulation flag to true and return 1 to indicate error.
+/*
+	1. unlock the locked forks
+	2. set the end_simulation flag to true
+	3. return 1 to indicate error
+*/
 
-int	end_sim(t_data *data)
+int	end_sim(t_philo *philo, t_fork fork_to_drop)
 {
-	safe_mutex(MUTEX_LOCK, &data->mutex, data);
-	data->end_simulation = true;
-	safe_mutex(MUTEX_UNLOCK, &data->mutex, data);
+	if (DEBUG_MODE)
+		return (end_sim_debug(philo, fork_to_drop));
+	if (fork_to_drop == DROP_FORK_1)
+		safe_mutex(MUTEX_UNLOCK, philo->first_fork, philo->data);
+	else if (fork_to_drop == DROP_FORK_2)
+		safe_mutex(MUTEX_UNLOCK, philo->second_fork, philo->data);
+	else if (fork_to_drop == DROP_BOTH)
+	{
+		safe_mutex(MUTEX_UNLOCK, philo->first_fork, philo->data);
+		safe_mutex(MUTEX_UNLOCK, philo->second_fork, philo->data);
+	}
+	safe_mutex(MUTEX_LOCK, &philo->data->mutex, philo->data);
+	philo->data->end_simulation = true;
+	safe_mutex(MUTEX_UNLOCK, &philo->data->mutex, philo->data);
 	return (1);
 }

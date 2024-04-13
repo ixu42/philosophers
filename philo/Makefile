@@ -6,7 +6,7 @@
 #    By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/27 16:32:21 by ixu               #+#    #+#              #
-#    Updated: 2024/04/12 16:47:24 by ixu              ###   ########.fr        #
+#    Updated: 2024/04/13 14:57:06 by ixu              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,7 +39,8 @@ SRCS := main.c \
 		getters_1.c \
 		getters_2.c \
 		setters.c \
-		safe_funcs.c
+		safe_funcs.c \
+		debug_utils.c
 
 # Object files with paths
 OBJS := $(addprefix $(OBJS_DIR), $(SRCS:.c=.o))
