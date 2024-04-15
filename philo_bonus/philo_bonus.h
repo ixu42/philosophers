@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:06:59 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/15 16:38:09 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/16 00:29:06 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,15 +61,6 @@
 # define ERR_GETTIMEOFDAY "gettimeofday() error\n"
 # define ERR_USLEEP "usleep() error\n"
 
-/*
-	macros for debugging purpose
-	change DEBUG_MODE to 1 to print more informative state messages
-*/
-# define DEBUG_MODE 0
-# define GREEN "\033[0;32m"
-# define RED "\033[0;31m"
-# define END "\033[0m"
-
 typedef struct s_data	t_data;
 
 typedef enum e_bool
@@ -107,14 +98,13 @@ typedef enum e_func
 	USLEEP
 }	t_func;
 
-/* typedef struct s_philo
+typedef enum e_sim_state
 {
-	int			id;
-	pid_t		pid;
-	int			meals_eaten;
-	long		last_meal_time;
-	t_data		*data;
-}	t_philo; */
+	ACTIVE,
+	PHILO_FULL,
+	PHILO_DIED,
+	OTHER_PHILO_DIED
+}	t_sim_state;
 
 struct s_data
 {
@@ -127,14 +117,12 @@ struct s_data
 	long		time_to_sleep;
 	long		meals_limit;
 	long		sim_start_time;
-	t_bool		end_simulation;
-	pthread_t	monitor;
+	t_sim_state	sim_state;
 	sem_t		*forks;
 	sem_t		*write;
 	sem_t		*sem;
 	sem_t		*a_philo_died;
-	// sem_t		*full;
-	// t_philo		*philos;
+	sem_t		*end_sim;
 };
 
 // utils_bonus.c
@@ -147,12 +135,6 @@ void	ft_usleep(long microsec, t_data *data);
 // ft_atol_bonus.c
 long	ft_atol(char *str);
 
-// ft_itoa_bonus.c
-char	*ft_itoa(int n); // to be removed?
-
-// ft_strjoin_bonus.c
-char	*ft_strjoin(char const *s1, char const *s2); // to be removed?
-
 // init_bonus.c
 void	init_data(t_data *data, char **argv);
 
@@ -160,10 +142,12 @@ void	init_data(t_data *data, char **argv);
 void	unlink_all_sems(void);
 
 // simulate_bonus.c
+t_bool	sim_should_end(t_data *data);
 void	simulate(t_data *data);
 
 // monitoring_bonus.c
 void	*monitoring(void *arg);
+void	*monitoring_end_sim(void *arg);
 
 // eat_bonus.c
 void	eat(t_data *data);
@@ -177,8 +161,7 @@ void	print_state(t_state state, t_data *data);
 	for data accessed by multiple threads concurrently.
 */
 // getter.c
-t_bool	sim_ended(t_data *data);
-t_bool	sim_started(t_data *data);
+t_sim_state	get_sim_state(t_data *data);
 long	get_meals_eaten(t_data *data);
 long	get_last_meal_time(t_data *data);
 long	get_philo_count(t_data *data);
@@ -188,12 +171,15 @@ long	get_time_to_die(t_data *data);
 // setters.c
 void	set_last_meal_time(t_data *data);
 void	increment_meal_counter(t_data *data);
-void	set_end_sim(t_data *data);
+// void	set_end_sim(t_data *data);
+void	set_philo_died(t_data *data);
+void	set_philo_full(t_data *data);
+void	set_other_philo_died(t_data *data);
 
 // safe_funcs_bonus.c
 void	safe_exit(char *err_msg, t_data *data, t_func func);
 void	safe_pthread(t_func func, pthread_t *thread,
-		void *(*routine)(void *), void *arg);
+		void *(*routine)(void *), t_data *data);
 void	safe_sem(t_func func, sem_t *sem, t_data *data);
 
 #endif

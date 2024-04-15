@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:08:29 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/15 15:18:44 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/15 23:49:53 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,15 +42,11 @@ static void	validate_input(int argc, char **argv)
 
 void	close_all_sems(t_data *data)
 {
-/* 	int	i;
-
-	i = -1;
-	while (++i < data->philo_count)
-		safe_sem(SEM_UNLINK, data->philos[i].sem, data); */
 	safe_sem(SEM_CLOSE, data->forks, data);
 	safe_sem(SEM_CLOSE, data->write, data);
 	safe_sem(SEM_CLOSE, data->sem, data);
 	safe_sem(SEM_CLOSE, data->a_philo_died, data);
+	safe_sem(SEM_CLOSE, data->end_sim, data);
 }
 
 void	unlink_all_sems(void)
@@ -59,13 +55,11 @@ void	unlink_all_sems(void)
 	sem_unlink("/write");
 	sem_unlink("/sem");
 	sem_unlink("/a_philo_died");
-	// sem_unlink("/sim_started");
-	// sem_unlink("/sim_ended");
+	sem_unlink("/end_sim");
 }
 
 static void	clean_all(t_data *data)
 {
-	// free(data->philos);
 	close_all_sems(data);
 	unlink_all_sems();
 }

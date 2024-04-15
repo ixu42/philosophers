@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 15:18:31 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/15 17:14:08 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/16 00:15:49 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,11 @@ static void	take_forks(t_data *data)
 {
 	safe_sem(SEM_WAIT, data->forks, data);
 	print_state(TOOK_1ST_FORK, data);
-	if (sim_ended(data))
+	if (sim_should_end(data))
 		exit(EXIT_SUCCESS);
 	safe_sem(SEM_WAIT, data->forks, data);
 	print_state(TOOK_2ND_FORK, data);
-	if (sim_ended(data))
+	if (sim_should_end(data))
 		exit(EXIT_SUCCESS);
 }
 
@@ -43,7 +43,7 @@ static void	eating(t_data *data)
 void	eat(t_data *data)
 {
 	take_forks(data);
-	if (sim_ended(data))
+	if (sim_should_end(data))
 		exit(EXIT_SUCCESS);
 	eating(data);
 	drop_forks(data);

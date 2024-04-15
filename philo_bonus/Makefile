@@ -6,7 +6,7 @@
 #    By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 12:08:01 by ixu               #+#    #+#              #
-#    Updated: 2024/04/15 08:43:39 by ixu              ###   ########.fr        #
+#    Updated: 2024/04/16 00:05:20 by ixu              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,8 +27,8 @@ RESET := \033[0m
 OBJS_DIR := objs_bonus/
 
 # Source file names
-SRCS := $(addsuffix _bonus.c, main utils ft_atol ft_itoa init simulate \
-			eat monitor print getters setters safe_funcs debug_utils)
+SRCS := $(addsuffix _bonus.c, main utils ft_atol init simulate \
+			eat monitor print getters setters safe_funcs)
 
 # Object files with paths
 OBJS := $(addprefix $(OBJS_DIR), $(SRCS:.c=.o))

@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 14:34:48 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/15 14:55:22 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/16 00:30:06 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,34 +26,23 @@ void	set_last_meal_time(t_data *data)
 	safe_sem(SEM_POST, data->sem, data);
 }
 
-void	set_end_sim(t_data *data)
+void	set_philo_died(t_data *data)
 {
 	safe_sem(SEM_WAIT, data->sem, data);
-	data->end_simulation = true;
+	data->sim_state = PHILO_DIED;
 	safe_sem(SEM_POST, data->sem, data);
 }
 
-/*
-	1. unlock the locked forks
-	2. set the end_simulation flag to true
-	3. return 1 to indicate error
-*/
+void	set_philo_full(t_data *data)
+{
+	safe_sem(SEM_WAIT, data->sem, data);
+	data->sim_state = PHILO_FULL;
+	safe_sem(SEM_POST, data->sem, data);
+}
 
-// int	end_sim(t_philo *philo, t_fork fork_to_drop)
-// {
-// 	if (DEBUG_MODE)
-// 		return (end_sim_debug(philo, fork_to_drop));
-// 	if (fork_to_drop == DROP_FORK_1)
-// 		safe_mutex(MUTEX_UNLOCK, philo->first_fork, philo->data);
-// 	else if (fork_to_drop == DROP_FORK_2)
-// 		safe_mutex(MUTEX_UNLOCK, philo->second_fork, philo->data);
-// 	else if (fork_to_drop == DROP_BOTH)
-// 	{
-// 		safe_mutex(MUTEX_UNLOCK, philo->first_fork, philo->data);
-// 		safe_mutex(MUTEX_UNLOCK, philo->second_fork, philo->data);
-// 	}
-// 	safe_sem(SEM_WAIT, &philo->data->sem, philo->data);
-// 	philo->data->end_simulation = true;
-// 	safe_sem(SEM_POST, &philo->data->sem, philo->data);
-// 	return (1);
-// }
+void	set_other_philo_died(t_data *data)
+{
+	safe_sem(SEM_WAIT, data->sem, data);
+	data->sim_state = OTHER_PHILO_DIED;
+	safe_sem(SEM_POST, data->sem, data);
+}
