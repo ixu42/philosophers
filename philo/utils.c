@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 17:28:52 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/11 19:18:41 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/15 00:25:30 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ long	get_time(t_time_unit time_unit, t_data *data)
 	if (gettimeofday(&tv, NULL) == -1)
 	{
 		safe_mutex(MUTEX_LOCK, &data->mutex, data);
-		return (safe_return("gettimeofday error\n", data, GETTIMEOFDAY));
+		return (safe_return(ERR_GETTIMEOFDAY, data, GETTIMEOFDAY));
 		safe_mutex(MUTEX_UNLOCK, &data->mutex, data);
 	}
 	if (time_unit == MICROSEC)
@@ -82,7 +82,7 @@ int	ft_usleep(long microsec, t_data *data)
 		if (usleep(500) == -1)
 		{
 			safe_mutex(MUTEX_LOCK, &data->mutex, data);
-			return (safe_return("usleep error\n", data, USLEEP));
+			return (safe_return(ERR_USLEEP, data, USLEEP));
 			safe_mutex(MUTEX_UNLOCK, &data->mutex, data);
 		}
 	}

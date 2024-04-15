@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 14:45:29 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/13 14:58:49 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/14 17:59:00 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ static int	set_flag(t_bool *a_philo_died, t_bool value)
 	return 0: the philo should be continuously checked in the while loop
 */
 
-static int	check(t_data *data, t_philo *philo, t_bool *a_philo_died)
+static int	check(t_data *data, t_philo *philo, t_bool *a_philo_died,
+					long time_to_die)
 {
 	long	current_time;
 	long	meals_eaten;
@@ -43,7 +44,7 @@ static int	check(t_data *data, t_philo *philo, t_bool *a_philo_died)
 	last_meal_time = get_last_meal_time(philo);
 	if (last_meal_time == -1)
 		return (-1);
-	if (current_time - last_meal_time > get_time_to_die(data))
+	if (current_time - last_meal_time > time_to_die)
 	{
 		set_end_sim(data);
 		if (print_state(DIED, philo))
@@ -56,12 +57,16 @@ static int	check(t_data *data, t_philo *philo, t_bool *a_philo_died)
 static int	if_a_philo_died(t_data *data, t_bool *a_philo_died)
 {
 	int		i;
+	long	philo_count;
+	long	time_to_die;
 	int		status;
 
 	i = -1;
-	while (++i < get_philo_count(data))
+	philo_count = get_philo_count(data);
+	time_to_die = get_time_to_die(data);
+	while (++i < philo_count)
 	{
-		status = check(data, &data->philos[i], a_philo_died);
+		status = check(data, &data->philos[i], a_philo_died, time_to_die);
 		if (status == -1)
 			return (1);
 		else if (status == 1)
@@ -74,6 +79,7 @@ static int	if_a_philo_died(t_data *data, t_bool *a_philo_died)
 static int	if_all_philos_full(t_data *data, t_bool *all_philos_full)
 {
 	int		i;
+	long	philo_count;
 	long	meals_eaten;
 
 	if (data->meals_limit == INT_MAX)
@@ -82,7 +88,8 @@ static int	if_all_philos_full(t_data *data, t_bool *all_philos_full)
 		return (0);
 	}
 	i = -1;
-	while (++i < get_philo_count(data))
+	philo_count = get_philo_count(data);
+	while (++i < philo_count)
 	{
 		meals_eaten = get_meals_eaten(&data->philos[i]);
 		if (meals_eaten == -1)

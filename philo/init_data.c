@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 09:16:09 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/12 16:48:47 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/15 00:26:16 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static t_philo	*init_philos(t_data *data)
 	philos = (t_philo *)malloc(sizeof(t_philo) * philo_count);
 	if (philos == NULL)
 	{
-		ft_putstr_fd("malloc error\n", 2);
+		ft_putstr_fd(ERR_MALLOC, 2);
 		free(data->forks);
 		return (NULL);
 	}
@@ -76,7 +76,7 @@ int	init_data(t_data *data, char **argv)
 	data->forks = (t_mutex *)malloc(sizeof(t_mutex) * num_of_forks);
 	if (data->forks == NULL)
 	{
-		ft_putstr_fd("malloc error\n", 2);
+		ft_putstr_fd(ERR_MALLOC, 2);
 		return (1);
 	}
 	data->philos = init_philos(data);

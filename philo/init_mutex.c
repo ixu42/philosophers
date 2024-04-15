@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 16:44:13 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/13 12:41:40 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/15 00:27:02 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static void	put_error_and_free_data(t_data *data)
 {
-	ft_putstr_fd("pthread_mutex_init error\n", 2);
+	ft_putstr_fd(ERR_MUTEX_INIT, 2);
 	free(data->philos);
 	free(data->forks);
 }

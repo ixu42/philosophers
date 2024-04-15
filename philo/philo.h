@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 14:10:56 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/13 14:59:01 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/15 00:27:33 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,15 @@
 // macros for error handling
 # define USAGE "Usage: ./philo [num_of_philos] [time_to_die] [time_to_eat] \
 [time_to_sleep] [num_of_times_each_philo_must_eat](optional)\n"
-# define ERR_CREATE "pthread_create error\n"
-# define ERR_JOIN "pthread_join error\n"
-# define ERR_MUTEX_LOCK "pthread_mutex_lock error\n"
-# define ERR_MUTEX_UNLOCK "pthread_mutex_unlock error\n"
-# define ERR_MUTEX_DESTROY "pthread_mutex_destroy error\n"
+# define ERR_MALLOC "malloc() error\n"
+# define ERR_CREATE "pthread_create() error\n"
+# define ERR_JOIN "pthread_join() error\n"
+# define ERR_MUTEX_INIT "pthread_mutex_init() error\n"
+# define ERR_MUTEX_LOCK "pthread_mutex_lock() error\n"
+# define ERR_MUTEX_UNLOCK "pthread_mutex_unlock() error\n"
+# define ERR_MUTEX_DESTROY "pthread_mutex_destroy() error\n"
+# define ERR_GETTIMEOFDAY "gettimeofday() error\n"
+# define ERR_USLEEP "usleep() error\n"
 
 /*
 	macros for debugging purpose
