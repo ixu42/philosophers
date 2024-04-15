@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:06:59 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/15 00:32:30 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/15 16:38:09 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,9 @@
 
 // INT_MAX, INT_MIN
 # include <limits.h>
+
+// kill
+#include <signal.h>
 
 # define USAGE "Usage: ./philo [num_of_philos] [time_to_die] [time_to_eat] \
 [time_to_sleep] [num_of_times_each_philo_must_eat](optional)\n"
@@ -104,17 +107,20 @@ typedef enum e_func
 	USLEEP
 }	t_func;
 
-typedef struct s_philo
+/* typedef struct s_philo
 {
 	int			id;
 	pid_t		pid;
 	int			meals_eaten;
 	long		last_meal_time;
 	t_data		*data;
-}	t_philo;
+}	t_philo; */
 
 struct s_data
 {
+	int			id;
+	int			meals_eaten;
+	long		last_meal_time;
 	long		philo_count;
 	long		time_to_die;
 	long		time_to_eat;
@@ -126,7 +132,9 @@ struct s_data
 	sem_t		*forks;
 	sem_t		*write;
 	sem_t		*sem;
-	t_philo		*philos;
+	sem_t		*a_philo_died;
+	// sem_t		*full;
+	// t_philo		*philos;
 };
 
 // utils_bonus.c
@@ -158,28 +166,28 @@ void	simulate(t_data *data);
 void	*monitoring(void *arg);
 
 // eat_bonus.c
-void	eat(t_philo *philo);
-void	eat_alone(t_philo *philo);
+void	eat(t_data *data);
+void	eat_alone(t_data *data);
 
 // print_bonus.c
-void	print_state(t_state state, t_philo *philo);
+void	print_state(t_state state, t_data *data);
 
 /*
 	the functions to prevent data races for read and write operations
 	for data accessed by multiple threads concurrently.
 */
 // getter.c
-t_bool	sim_ended(t_philo *philo);
+t_bool	sim_ended(t_data *data);
 t_bool	sim_started(t_data *data);
-long	get_meals_eaten(t_philo *philo);
-long	get_last_meal_time(t_philo *philo);
+long	get_meals_eaten(t_data *data);
+long	get_last_meal_time(t_data *data);
 long	get_philo_count(t_data *data);
-long	get_time_to_eat(t_philo *philo);
-long	get_time_to_sleep(t_philo *philo);
+long	get_time_to_eat(t_data *data);
+long	get_time_to_sleep(t_data *data);
 long	get_time_to_die(t_data *data);
 // setters.c
-void	set_last_meal_time(t_philo *philo);
-void	increment_meal_counter(t_philo *philo);
+void	set_last_meal_time(t_data *data);
+void	increment_meal_counter(t_data *data);
 void	set_end_sim(t_data *data);
 
 // safe_funcs_bonus.c

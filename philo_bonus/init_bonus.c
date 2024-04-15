@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 10:44:02 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/15 00:28:36 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/15 15:09:43 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,9 @@ static void	init_semaphores(t_data *data)
 		handle_sem_open_error();
 	data->sem = sem_open("/sem", O_CREAT, 0644, 1);
 	if (data->sem == SEM_FAILED)
+		handle_sem_open_error();
+	data->a_philo_died = sem_open("/a_philo_died", O_CREAT, 0644, 0);
+	if (data->a_philo_died == SEM_FAILED)
 		handle_sem_open_error();
 	// data->sim_started = sem_open("/sim_started", O_CREAT, 0644, 0);
 	// if (data->sim_started == SEM_FAILED)
@@ -81,7 +84,7 @@ static sem_t	*get_philo_sem(int philo_id, t_data *data)
 	return (sem);
 } */
 
-static t_philo	*init_philos(t_data *data)
+/* static t_philo	*init_philos(t_data *data)
 {
 	t_philo *philos;
 	int		i;
@@ -103,10 +106,12 @@ static t_philo	*init_philos(t_data *data)
 		philos[i].data = data;
 	}
 	return (philos);
-}
+} */
 
 void	init_data(t_data *data, char **argv)
 {
+	data->meals_eaten = 0;
+	data->last_meal_time = INT_MAX;
 	data->philo_count = ft_atol(argv[1]);
 	data->time_to_die = ft_atol(argv[2]) * 1000;
 	data->time_to_eat = ft_atol(argv[3]) * 1000;
@@ -117,5 +122,5 @@ void	init_data(t_data *data, char **argv)
 		data->meals_limit = INT_MAX;
 	data->end_simulation = false;
 	init_semaphores(data);
-	data->philos = init_philos(data);
+	// data->philos = init_philos(data);
 }

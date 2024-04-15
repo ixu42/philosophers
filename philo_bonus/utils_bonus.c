@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 12:14:57 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/15 00:32:42 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/15 15:11:13 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ long	get_time(t_time_unit time_unit, t_data *data)
 {
 	struct timeval	tv;
 
-	(void)data;
+	(void)data; // check this
 	if (gettimeofday(&tv, NULL) == -1)
 	{
 		ft_putstr_fd(ERR_GETTIMEOFDAY, 2);

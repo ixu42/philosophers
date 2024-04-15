@@ -6,24 +6,24 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 14:34:48 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/14 19:07:08 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/15 14:55:22 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-void	increment_meal_counter(t_philo *philo)
+void	increment_meal_counter(t_data *data)
 {
-	safe_sem(SEM_WAIT, philo->data->sem, philo->data);
-	philo->meals_eaten++;
-	safe_sem(SEM_POST, philo->data->sem, philo->data);
+	safe_sem(SEM_WAIT, data->sem, data);
+	data->meals_eaten++;
+	safe_sem(SEM_POST, data->sem, data);
 }
 
-void	set_last_meal_time(t_philo *philo)
+void	set_last_meal_time(t_data *data)
 {
-	safe_sem(SEM_WAIT, philo->data->sem, philo->data);
-	philo->last_meal_time = get_time(MICROSEC, philo->data);
-	safe_sem(SEM_POST, philo->data->sem, philo->data);
+	safe_sem(SEM_WAIT, data->sem, data);
+	data->last_meal_time = get_time(MICROSEC, data);
+	safe_sem(SEM_POST, data->sem, data);
 }
 
 void	set_end_sim(t_data *data)
