@@ -6,13 +6,13 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:08:29 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/11 12:09:08 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/14 23:38:34 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-static int	validate_input(int argc, char **argv)
+static void	validate_input(int argc, char **argv)
 {
 	int		i;
 	char	*err[5];
@@ -26,29 +26,60 @@ static int	validate_input(int argc, char **argv)
 	{
 		ft_putstr_fd("Invalid number of arguments\n", 2);
 		printf(USAGE);
-		return (1);
+		exit(EXIT_FAILURE);
 	}
 	i = 0;
 	while (argv[++i] != NULL)
 	{
-		if ((i < 5 && ft_atol(argv[i]) <= 0) || \
-			(i == 5 && ft_atol(argv[i]) < 0))
+		if ((i < 5 && ft_atol(argv[i]) <= 0)
+			|| (i == 5 && ft_atol(argv[i]) < 0))
 		{
 			ft_putstr_fd(err[i - 1], 2);
-			return (1);
+			exit(EXIT_FAILURE);
 		}
 	}
-	return (0);
+}
+
+void	close_all_sems(t_data *data)
+{
+/* 	int	i;
+
+	i = -1;
+	while (++i < data->philo_count)
+		safe_sem(SEM_UNLINK, data->philos[i].sem, data); */
+	safe_sem(SEM_CLOSE, data->forks, data);
+	safe_sem(SEM_CLOSE, data->write, data);
+	safe_sem(SEM_CLOSE, data->sem, data);
+}
+
+void	unlink_all_sems(void)
+{
+	sem_unlink("/forks");
+	sem_unlink("/write");
+	sem_unlink("/sem");
+	// sem_unlink("/sim_started");
+	// sem_unlink("/sim_ended");
+}
+
+static void	clean_all(t_data *data)
+{
+	free(data->philos);
+	close_all_sems(data);
+	unlink_all_sems();
 }
 
 int	main(int argc, char **argv)
 {
 	t_data	data;
 
-	printf("Under development\n");
-	if (validate_input(argc, argv))
-		return (1);
-	/* if (init_data(&data, argv))
-		return (1); */
+	// printf("before validate_input()\n");
+	validate_input(argc, argv);
+	// printf("before init_data()\n");
+	init_data(&data, argv);
+	// printf("before simulate()\n");
+	simulate(&data);
+	// printf("before clean_all()\n");
+	clean_all(&data);
+	// printf("before exit main\n");
 	return (0);
 }
