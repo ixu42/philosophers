@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 12:17:58 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/15 19:58:45 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/16 09:47:34 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,10 @@ static void	protect(int status, t_func func, t_data *data)
 	{
 		if (func == CREATE)
 			safe_exit(ERR_CREATE, data, CREATE);
-		else if (func == JOIN)
-			safe_exit(ERR_JOIN, data, JOIN);
+		// else if (func == JOIN)
+		// 	safe_exit(ERR_JOIN, data, JOIN);
+		else if (func == DETACH)
+			safe_exit(ERR_DETACH, data, DETACH);
 		else if (func == SEM_WAIT)
 			safe_exit(ERR_SEM_WAIT, data, SEM_WAIT);
 		else if (func == SEM_POST)
@@ -55,8 +57,10 @@ void	safe_pthread(t_func func, pthread_t *thread,
 {
 	if (func == CREATE)
 		protect(pthread_create(thread, NULL, routine, data), func, data);
-	else if (func == JOIN)
-		protect(pthread_join(*thread, NULL), func, data);
+	// else if (func == JOIN)
+	// 	protect(pthread_join(*thread, NULL), func, data);
+	else if (func == DETACH)
+		protect(pthread_detach(*thread), func, data);
 }
 
 /*

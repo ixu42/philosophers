@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 14:34:35 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/16 00:28:39 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/16 09:41:22 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	print_state(t_state state, t_data *data)
 		else if (state == THINKING)
 			printf("%ld %d is thinking\n", time, data->id);
 	}
-	if (state == DIED)
+	if (state == DIED && sim_state == PHILO_DIED)
 		printf("%ld %d died\n", time, data->id);
 	safe_sem(SEM_POST, data->write, data);
 }

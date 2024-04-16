@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 12:12:25 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/16 00:29:35 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/16 09:56:56 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,11 @@ static void	routine(t_data *data)
 	pthread_t	monitor;
 	pthread_t	monitor_end_sim;
 
-	arrange_eating(data);
 	safe_pthread(CREATE, &monitor, &monitoring, data);
 	safe_pthread(CREATE, &monitor_end_sim, &monitoring_end_sim, data);
+	safe_pthread(DETACH, &monitor, NULL, data);
+	safe_pthread(DETACH, &monitor_end_sim, NULL, data);
+	arrange_eating(data);
 	while (true)
 	{
 		// printf("in routine while loop\n");
@@ -68,8 +70,8 @@ static void	routine(t_data *data)
 		ft_usleep(get_time_to_sleep(data), data);
 		print_state(THINKING, data);
 	}
-	safe_pthread(JOIN, &monitor, NULL, data);
-	safe_pthread(JOIN, &monitor_end_sim, NULL, data);
+	// safe_pthread(JOIN, &monitor, NULL, data);
+	// safe_pthread(JOIN, &monitor_end_sim, NULL, data);
 }
 
 static void	prepare_simulation(t_data *data)
@@ -108,7 +110,7 @@ void	simulate(t_data *data)
 		exit(EXIT_FAILURE);
 	}
 	prepare_simulation(data);
-	safe_pthread(CREATE, &monitor_death, &monitoring_death, data);
+	// safe_pthread(CREATE, &monitor_death, &monitoring_death, data);
 	i = -1;
 	while (++i < data->philo_count)
 	{
@@ -126,6 +128,8 @@ void	simulate(t_data *data)
 			routine(data);
 		}
 	}
+	safe_pthread(CREATE, &monitor_death, &monitoring_death, data);
+	safe_pthread(DETACH, &monitor_death, NULL, data);
 	i = -1;
 	while (++i < data->philo_count)
 	{
@@ -138,6 +142,6 @@ void	simulate(t_data *data)
 		}
 	}
 	safe_sem(SEM_POST, data->a_philo_died, data);
-	safe_pthread(JOIN, &monitor_death, monitoring_death, data);
+	// safe_pthread(JOIN, &monitor_death, monitoring_death, data);
 	free(pids);
 }

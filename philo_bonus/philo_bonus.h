@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:06:59 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/16 00:29:06 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/16 09:48:08 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,8 @@
 # define ERR_FORK "fork() error\n"
 # define ERR_WAITPID "waitpid() error\n"
 # define ERR_CREATE "pthread_create() error\n"
-# define ERR_JOIN "pthread_join() error\n"
+// # define ERR_JOIN "pthread_join() error\n"
+# define ERR_DETACH "pthread_detach() error\n"
 # define ERR_SEM_OPEN "sem_open() error\n"
 # define ERR_SEM_WAIT "sem_wait() error\n"
 # define ERR_SEM_POST "sem_post() error\n"
@@ -90,7 +91,8 @@ typedef enum e_time_unit
 typedef enum e_func
 {
 	CREATE,
-	JOIN,
+	// JOIN,
+	DETACH,
 	SEM_WAIT,
 	SEM_POST,
 	SEM_CLOSE,
