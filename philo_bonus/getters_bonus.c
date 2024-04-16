@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 14:34:20 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/16 00:30:23 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/16 16:27:08 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,10 @@ t_sim_state	get_sim_state(t_data *data)
 {
 	t_sim_state	ret;
 
+	printf("%d before sem wait for get_sim_state\n", data->id);
 	safe_sem(SEM_WAIT, data->sem, data);
-	ret = data->sim_state;		
+	ret = data->sim_state;	
+	printf("%d before sem post for get_sim_state\n", data->id);	
 	safe_sem(SEM_POST, data->sem, data);
 	return (ret);
 }

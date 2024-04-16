@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 14:51:27 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/16 00:10:41 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/16 16:33:54 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,11 @@ static t_bool	philo_died(t_data *data)
 		// printf("id:%d\n", data->id);
 		// printf("diff:%ld\n", current_time - last_meal_time);
 		// printf("time_to_die:%ld\n", time_to_die);
+		set_sim_state(data, PHILO_DIED);
 		print_state(DIED, data);
-		set_philo_died(data);
+		printf("%d died and signals\n", data->id);
 		safe_sem(SEM_POST, data->a_philo_died, data);
+		printf("%d died and after signaling\n", data->id);
 		return (true);
 	}
 	return (false);
@@ -47,7 +49,7 @@ static t_bool	philo_full(t_data *data)
 	meals_eaten = get_meals_eaten(data);
 	if (meals_eaten < data->meals_limit)
 		return (false);
-	set_philo_full(data);
+	set_sim_state(data, PHILO_FULL);
 	return (true);
 }
 
@@ -74,8 +76,10 @@ void	*monitoring_end_sim(void *arg)
 	t_data	*data;
 
 	data = (t_data *)arg;
+	printf("%d waiting end_sim...\n", data->id);
 	safe_sem(SEM_WAIT, data->end_sim, data);
-	set_other_philo_died(data);
+	set_sim_state(data, OTHER_PHILO_DIED);
+	printf("%d signaling end_sim...\n", data->id);
 	safe_sem(SEM_POST, data->end_sim, data);
 	return (NULL);
 }

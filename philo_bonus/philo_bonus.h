@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:06:59 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/16 09:48:08 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/16 13:10:56 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,9 +174,10 @@ long	get_time_to_die(t_data *data);
 void	set_last_meal_time(t_data *data);
 void	increment_meal_counter(t_data *data);
 // void	set_end_sim(t_data *data);
-void	set_philo_died(t_data *data);
-void	set_philo_full(t_data *data);
-void	set_other_philo_died(t_data *data);
+void	set_sim_state(t_data *data, t_sim_state sim_state);
+// void	set_philo_died(t_data *data);
+// void	set_philo_full(t_data *data);
+// void	set_other_philo_died(t_data *data);
 
 // safe_funcs_bonus.c
 void	safe_exit(char *err_msg, t_data *data, t_func func);

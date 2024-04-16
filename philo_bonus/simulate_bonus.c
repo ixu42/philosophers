@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 12:12:25 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/16 09:56:56 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/16 13:36:37 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,17 +53,16 @@ static void	routine(t_data *data)
 	arrange_eating(data);
 	while (true)
 	{
-		// printf("in routine while loop\n");
+		printf("%d in routine while loop\n", data->id);
 		if (sim_should_end(data))
 			exit(EXIT_SUCCESS);
-		// printf("before eating\n");
+		printf("%d before eating\n", data->id);
 		if (data->philo_count == 1)
 			eat_alone(data);
 		else
 			eat(data);
-		// printf("%d after eating\n", data->id);
-		// printf("%d meals eaten:%d\n", data->id, data->meals_eaten);
-		// printf("%d has sim ended:%d\n", data->id, data->end_simulation);
+		printf("%d after eating\n", data->id);
+		printf("%d meals eaten:%d\n", data->id, data->meals_eaten);
 		if (sim_should_end(data))
 			exit(EXIT_SUCCESS);
 		print_state(SLEEPING, data);
@@ -91,7 +90,9 @@ static void	*monitoring_death(void *arg)
 	t_data	*data;
 
 	data = (t_data *)arg;
+	printf("waiting for a_philo_died sem to signal...\n");
 	safe_sem(SEM_WAIT, data->a_philo_died, data);
+	printf("end_sim sem is signaling...\n");
 	safe_sem(SEM_POST, data->end_sim, data);
 	return (NULL);
 }
@@ -140,6 +141,7 @@ void	simulate(t_data *data)
 			free(pids);
 			exit(EXIT_FAILURE);
 		}
+		printf("philo %d exiting...\n", i + 1);
 	}
 	safe_sem(SEM_POST, data->a_philo_died, data);
 	// safe_pthread(JOIN, &monitor_death, monitoring_death, data);
