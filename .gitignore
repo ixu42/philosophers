@@ -2,6 +2,7 @@ philo/objs
 philo/philo
 philo_bonus/objs_bonus
 philo_bonus/philo_bonus
+philo_bonus/.bonus
 *.debug
 *philo_debug
 *.DS_Store
