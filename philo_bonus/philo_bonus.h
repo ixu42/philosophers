@@ -62,6 +62,12 @@
 # define ERR_GETTIMEOFDAY "gettimeofday() error\n"
 # define ERR_USLEEP "usleep() error\n"
 
+// only implemented colors for the bonus part
+# define DEBUG_MODE 1
+# define GREEN "\033[0;32m"
+# define RED "\033[0;31m"
+# define END "\033[0m"
+
 typedef struct s_data	t_data;
 
 typedef enum e_bool
@@ -119,12 +125,13 @@ struct s_data
 	long		time_to_sleep;
 	long		meals_limit;
 	long		sim_start_time;
+	pid_t		*pids;
 	t_sim_state	sim_state;
 	sem_t		*forks;
 	sem_t		*write;
 	sem_t		*sem;
 	sem_t		*a_philo_died;
-	sem_t		*end_sim;
+	// sem_t		*end_sim;
 };
 
 // utils_bonus.c
@@ -173,11 +180,7 @@ long	get_time_to_die(t_data *data);
 // setters.c
 void	set_last_meal_time(t_data *data);
 void	increment_meal_counter(t_data *data);
-// void	set_end_sim(t_data *data);
 void	set_sim_state(t_data *data, t_sim_state sim_state);
-// void	set_philo_died(t_data *data);
-// void	set_philo_full(t_data *data);
-// void	set_other_philo_died(t_data *data);
 
 // safe_funcs_bonus.c
 void	safe_exit(char *err_msg, t_data *data, t_func func);

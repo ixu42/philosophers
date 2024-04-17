@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 10:44:02 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/16 00:30:45 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/17 10:27:57 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,9 @@ static void	init_semaphores(t_data *data)
 	data->a_philo_died = sem_open("/a_philo_died", O_CREAT, 0644, 0);
 	if (data->a_philo_died == SEM_FAILED)
 		handle_sem_open_error();
-	data->end_sim = sem_open("/end_sim", O_CREAT, 0644, 0);
-	if (data->end_sim == SEM_FAILED)
-		handle_sem_open_error();
+	// data->end_sim = sem_open("/end_sim", O_CREAT, 0644, 0);
+	// if (data->end_sim == SEM_FAILED)
+	// 	handle_sem_open_error();
 }
 
 void	init_data(t_data *data, char **argv)

@@ -12,13 +12,13 @@
 
 #include "philo_bonus.h"
 
-static t_bool	philo_died(t_data *data)
+static t_bool	philo_died(t_data *data, long time_to_die)
 {
-	long	time_to_die;
+	// long	time_to_die;
 	long	current_time;
 	long	last_meal_time;
 
-	time_to_die = get_time_to_die(data);
+	// time_to_die = get_time_to_die(data); // change in mandatory part as well
 	if (get_meals_eaten(data) >= data->meals_limit)
 		return (false);
 	current_time = get_time(MICROSEC, data);
@@ -32,9 +32,9 @@ static t_bool	philo_died(t_data *data)
 		// printf("time_to_die:%ld\n", time_to_die);
 		set_sim_state(data, PHILO_DIED);
 		print_state(DIED, data);
-		printf("%d died and signals\n", data->id);
+		// printf("%d died and signals\n", data->id);
 		safe_sem(SEM_POST, data->a_philo_died, data);
-		printf("%d died and after signaling\n", data->id);
+		// printf("%d died and after signaling\n", data->id);
 		return (true);
 	}
 	return (false);
@@ -56,13 +56,20 @@ static t_bool	philo_full(t_data *data)
 void	*monitoring(void *arg)
 {
 	t_data	*data;
+	long	time_to_die;
 
 	data = (t_data *)arg;
+	time_to_die = get_time_to_die(data);
 	while (true)
 	{
-		if (philo_died(data) || philo_full(data))
+		if (philo_died(data, time_to_die) || philo_full(data))
 			break ;
+		// if (get_sim_state(data) != ACTIVE)
+			// break ;
+		// philo_died(data, time_to_die);
+		// philo_full(data);
 	}
+	// printf("%d monitor thread terminating...\n", data->id);
 	return (NULL);
 }
 
@@ -71,15 +78,17 @@ void	*monitoring(void *arg)
 	and the current philo's simulation should end.
 */
 
-void	*monitoring_end_sim(void *arg)
+/* void	*monitoring_end_sim(void *arg)
 {
 	t_data	*data;
 
 	data = (t_data *)arg;
-	printf("%d waiting end_sim...\n", data->id);
+	// printf("%d waiting end_sim...\n", data->id);
 	safe_sem(SEM_WAIT, data->end_sim, data);
-	set_sim_state(data, OTHER_PHILO_DIED);
-	printf("%d signaling end_sim...\n", data->id);
+	if (get_sim_state(data) != PHILO_DIED)
+		set_sim_state(data, OTHER_PHILO_DIED);
+	// printf("%d signaling end_sim...\n", data->id);
 	safe_sem(SEM_POST, data->end_sim, data);
+	// printf("%d monitor end sim thread terminating...\n", data->id);
 	return (NULL);
-}
+} */

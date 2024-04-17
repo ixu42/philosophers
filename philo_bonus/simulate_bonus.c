@@ -32,6 +32,7 @@ t_bool	sim_should_end(t_data *data)
 	t_sim_state	sim_state;
 
 	sim_state = get_sim_state(data);
+	// printf("%d sim state:%d\n", data->id, sim_state);
 	if (sim_state == PHILO_DIED)
 		return (true);
 	else if (sim_state == PHILO_FULL)
@@ -44,27 +45,33 @@ t_bool	sim_should_end(t_data *data)
 static void	routine(t_data *data)
 {
 	pthread_t	monitor;
-	pthread_t	monitor_end_sim;
+	// pthread_t	monitor_end_sim;
 
 	safe_pthread(CREATE, &monitor, &monitoring, data);
-	safe_pthread(CREATE, &monitor_end_sim, &monitoring_end_sim, data);
+	// safe_pthread(CREATE, &monitor_end_sim, &monitoring_end_sim, data);
 	safe_pthread(DETACH, &monitor, NULL, data);
-	safe_pthread(DETACH, &monitor_end_sim, NULL, data);
+	// safe_pthread(DETACH, &monitor_end_sim, NULL, data);
 	arrange_eating(data);
 	while (true)
 	{
-		printf("%d in routine while loop\n", data->id);
+		// printf("%d in routine while loop\n", data->id);
 		if (sim_should_end(data))
+		{
+			// printf("soon to exit...\n");
 			exit(EXIT_SUCCESS);
-		printf("%d before eating\n", data->id);
+		}
+		// printf("%d before eating\n", data->id);
 		if (data->philo_count == 1)
 			eat_alone(data);
 		else
 			eat(data);
-		printf("%d after eating\n", data->id);
-		printf("%d meals eaten:%d\n", data->id, data->meals_eaten);
+		// printf("%d after eating\n", data->id);
+		// printf("%d meals eaten:%d\n", data->id, data->meals_eaten);
 		if (sim_should_end(data))
+		{
+			// printf("%d soon to exit!\n", data->id);
 			exit(EXIT_SUCCESS);
+		}
 		print_state(SLEEPING, data);
 		ft_usleep(get_time_to_sleep(data), data);
 		print_state(THINKING, data);
@@ -88,42 +95,45 @@ static void	prepare_simulation(t_data *data)
 static void	*monitoring_death(void *arg)
 {
 	t_data	*data;
+	int		i;
 
 	data = (t_data *)arg;
-	printf("waiting for a_philo_died sem to signal...\n");
+	// printf("waiting for a_philo_died sem to signal...\n");
 	safe_sem(SEM_WAIT, data->a_philo_died, data);
-	printf("end_sim sem is signaling...\n");
-	safe_sem(SEM_POST, data->end_sim, data);
+	// printf("end_sim sem is signaling from parent...\n");
+	// safe_sem(SEM_POST, data->end_sim, data);
+	i = -1;
+	while (++i < data->philo_count)
+		kill(data->pids[i], SIGINT);
 	return (NULL);
 }
 
 void	simulate(t_data *data)
 {
 	int		i;
-	pid_t	*pids;
+	// pid_t	*pids;
 	pthread_t	monitor_death;
 
-	pids = (pid_t *)malloc(sizeof(pid_t) * data->philo_count);
-	if (pids == NULL)
+	data->pids = (pid_t *)malloc(sizeof(pid_t) * data->philo_count);
+	if (data->pids == NULL)
 	{
 		ft_putstr_fd(ERR_MALLOC, 2);
 		unlink_all_sems();
 		exit(EXIT_FAILURE);
 	}
 	prepare_simulation(data);
-	// safe_pthread(CREATE, &monitor_death, &monitoring_death, data);
 	i = -1;
 	while (++i < data->philo_count)
 	{
-		pids[i] = fork();
-		if (pids[i] == -1)
+		data->pids[i] = fork();
+		if (data->pids[i] == -1)
 		{
 			ft_putstr_fd(ERR_FORK, 2);
 			unlink_all_sems();
-			free(pids);
+			free(data->pids);
 			exit(EXIT_FAILURE);
 		}
-		if (pids[i] == 0)
+		if (data->pids[i] == 0)
 		{
 			data->id = i + 1;
 			routine(data);
@@ -134,16 +144,16 @@ void	simulate(t_data *data)
 	i = -1;
 	while (++i < data->philo_count)
 	{
-		if (waitpid(pids[i], NULL, 0) == -1)
+		if (waitpid(data->pids[i], NULL, 0) == -1)
 		{
 			ft_putstr_fd(ERR_WAITPID, 2);
 			unlink_all_sems();
-			free(pids);
+			free(data->pids);
 			exit(EXIT_FAILURE);
 		}
-		printf("philo %d exiting...\n", i + 1);
+		// printf("philo %d exiting...\n", i + 1);
 	}
 	safe_sem(SEM_POST, data->a_philo_died, data);
 	// safe_pthread(JOIN, &monitor_death, monitoring_death, data);
-	free(pids);
+	free(data->pids);
 }

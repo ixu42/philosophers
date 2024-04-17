@@ -16,10 +16,11 @@ t_sim_state	get_sim_state(t_data *data)
 {
 	t_sim_state	ret;
 
-	printf("%d before sem wait for get_sim_state\n", data->id);
+	// printf("%d before sem wait for get_sim_state\n", data->id);
 	safe_sem(SEM_WAIT, data->sem, data);
 	ret = data->sim_state;	
-	printf("%d before sem post for get_sim_state\n", data->id);	
+	// printf("sim state:%d\n", ret);
+	// printf("%d before sem post for get_sim_state\n", data->id);	
 	safe_sem(SEM_POST, data->sem, data);
 	return (ret);
 }
@@ -28,8 +29,10 @@ long	get_meals_eaten(t_data *data)
 {
 	long	ret;
 
+	// printf("%d before sem wait for get_meals_eaten\n", data->id);
 	safe_sem(SEM_WAIT, data->sem, data);
 	ret = data->meals_eaten;
+	// printf("%d before sem post for get_meals_eaten\n", data->id);
 	safe_sem(SEM_POST, data->sem, data);
 	return (ret);
 }
@@ -38,8 +41,10 @@ long	get_last_meal_time(t_data *data)
 {
 	long	ret;
 
+	// printf("%d before sem wait for get_last_meal_time\n", data->id);
 	safe_sem(SEM_WAIT, data->sem, data);
 	ret = data->last_meal_time;
+	// printf("%d before sem post for get_last_meal_time\n", data->id);
 	safe_sem(SEM_POST, data->sem, data);
 	return (ret);
 }
@@ -62,8 +67,10 @@ long	get_time_to_eat(t_data *data)
 {
 	long	ret;
 
+	// printf("%d before sem wait for get_time_to_eat\n", data->id);
 	safe_sem(SEM_WAIT, data->sem, data);
 	ret = data->time_to_eat;
+	// printf("%d before sem post for get_time_to_eat\n", data->id);
 	safe_sem(SEM_POST, data->sem, data);
 	return (ret);
 }
@@ -72,8 +79,10 @@ long	get_time_to_sleep(t_data *data)
 {
 	long	ret;
 
+	// printf("%d before sem wait for get_time_to_sleep\n", data->id);
 	safe_sem(SEM_WAIT, data->sem, data);
 	ret = data->time_to_sleep;
+	// printf("%d before sem post for get_time_to_sleep\n", data->id);
 	safe_sem(SEM_POST, data->sem, data);
 	return (ret);
 }
@@ -82,8 +91,10 @@ long	get_time_to_die(t_data *data)
 {
 	long	ret;
 
+	// printf("%d before sem wait for get_time_to_die\n", data->id);
 	safe_sem(SEM_WAIT, data->sem, data);
 	ret = data->time_to_die;
+	// printf("%d before sem post for get_time_to_die\n", data->id);
 	safe_sem(SEM_POST, data->sem, data);
 	return (ret);
 }

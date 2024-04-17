@@ -14,47 +14,52 @@
 
 static void	drop_forks(t_data *data)
 {
-	// if (DEBUG_MODE)
-	// 	return (drop_forks_debug(philo, fork_to_drop));
 	safe_sem(SEM_POST, data->forks, data);
 	safe_sem(SEM_POST, data->forks, data);
+	// printf("%d has dropped both forks\n", data->id);
 }
 
 static void	take_forks(t_data *data)
 {
-	printf("%d before taking first fork\n", data->id);
+	// printf("%d before taking first fork\n", data->id);
 	safe_sem(SEM_WAIT, data->forks, data);
+	// printf("%d has taken first fork\n", data->id);
 	print_state(TOOK_1ST_FORK, data);
-	printf("%d has taken first fork\n", data->id);
 	if (sim_should_end(data))
+	{
+		// printf("%d sim should end!\n", data->id);
+		safe_sem(SEM_POST, data->forks, data);
+		// printf("%d has dropped first fork\n", data->id);
 		exit(EXIT_SUCCESS);
-	safe_sem(SEM_WAIT, data->forks, data);
+	}
+	safe_sem(SEM_WAIT, data->forks, data); // drop first fork
 	print_state(TOOK_2ND_FORK, data);
-	printf("%d has taken second fork\n", data->id);
+	// printf("%d has taken second fork\n", data->id);
 	if (sim_should_end(data))
+	{
+		drop_forks(data);
 		exit(EXIT_SUCCESS);
+	}
 }
 
 static void	eating(t_data *data)
 {
 	set_last_meal_time(data);
 	print_state(EATING, data);
-	printf("%d after printing eating state\n", data->id);
+	// printf("%d after printing eating state\n", data->id);
 	ft_usleep(get_time_to_eat(data), data);
-	printf("%d after sleep for eating\n", data->id);
+	// printf("%d after sleep for eating\n", data->id);
 	increment_meal_counter(data);
-	printf("%d after incrementing meals counter\n", data->id);
+	// printf("%d after incrementing meals counter\n", data->id);
 }
 
 void	eat(t_data *data)
 {
 	take_forks(data);
-	// if (sim_should_end(data))
-	// 	exit(EXIT_SUCCESS);
 	eating(data);
-	printf("%d has just eaten\n", data->id);
+	// printf("%d has just eaten\n", data->id);
 	drop_forks(data);
-	printf("%d has drop forks\n", data->id);
+	// printf("%d has drop forks\n", data->id);
 }
 
 /*

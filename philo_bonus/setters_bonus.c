@@ -14,24 +14,28 @@
 
 void	increment_meal_counter(t_data *data)
 {
-	printf("%d before sem wait for meals counter\n", data->id);
+	// printf("%d before sem wait for meals counter\n", data->id);
 	safe_sem(SEM_WAIT, data->sem, data);
 	data->meals_eaten++;
-	printf("%d before sem post for meals counter\n", data->id);
+	// printf("%d before sem post for meals counter\n", data->id);
 	safe_sem(SEM_POST, data->sem, data);
 }
 
 void	set_last_meal_time(t_data *data)
 {
+	// printf("%d before sem wait for set_last_meal_time\n", data->id);
 	safe_sem(SEM_WAIT, data->sem, data);
 	data->last_meal_time = get_time(MICROSEC, data);
+	// printf("%d before sem post for set_last_meal_time\n", data->id);
 	safe_sem(SEM_POST, data->sem, data);
 }
 
 void	set_sim_state(t_data *data, t_sim_state sim_state)
 {
+	// printf("%d before sem wait for set_sim_state\n", data->id);
 	safe_sem(SEM_WAIT, data->sem, data);
 	data->sim_state = sim_state;
+	// printf("%d before sem post for set_sim_state\n", data->id);
 	safe_sem(SEM_POST, data->sem, data);
 }
 
