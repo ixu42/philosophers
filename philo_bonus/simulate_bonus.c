@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 12:12:25 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/16 13:36:37 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/17 17:17:21 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,12 @@
 	(also works the other way around)
 */
 
-static void	arrange_eating(t_data *data)
+static void	arrange_eating(t_data *data, long time_to_eat)
 {
 	if (data->id % 2 == 0)
 	{
 		print_state(THINKING, data);
-		ft_usleep(get_time_to_eat(data) / 2, data);
+		ft_usleep(time_to_eat / 2, data);
 	}
 }
 
@@ -45,35 +45,39 @@ t_bool	sim_should_end(t_data *data)
 static void	routine(t_data *data)
 {
 	pthread_t	monitor;
+	long		time_to_eat;
+	long		time_to_sleep;
 	// pthread_t	monitor_end_sim;
 
+	time_to_eat = get_time_to_eat(data);
+	time_to_sleep = get_time_to_sleep(data);
 	safe_pthread(CREATE, &monitor, &monitoring, data);
 	// safe_pthread(CREATE, &monitor_end_sim, &monitoring_end_sim, data);
 	safe_pthread(DETACH, &monitor, NULL, data);
 	// safe_pthread(DETACH, &monitor_end_sim, NULL, data);
-	arrange_eating(data);
+	arrange_eating(data, time_to_eat);
 	while (true)
 	{
 		// printf("%d in routine while loop\n", data->id);
-		if (sim_should_end(data))
-		{
-			// printf("soon to exit...\n");
-			exit(EXIT_SUCCESS);
-		}
+		// if (sim_should_end(data))
+		// {
+		// 	// printf("soon to exit...\n");
+		// 	// exit(EXIT_SUCCESS);
+		// }
 		// printf("%d before eating\n", data->id);
 		if (data->philo_count == 1)
 			eat_alone(data);
 		else
-			eat(data);
+			eat(data, time_to_eat);
 		// printf("%d after eating\n", data->id);
 		// printf("%d meals eaten:%d\n", data->id, data->meals_eaten);
-		if (sim_should_end(data))
-		{
-			// printf("%d soon to exit!\n", data->id);
-			exit(EXIT_SUCCESS);
-		}
+		// if (sim_should_end(data))
+		// {
+		// 	// printf("%d soon to exit!\n", data->id);
+		// 	// exit(EXIT_SUCCESS);
+		// }
 		print_state(SLEEPING, data);
-		ft_usleep(get_time_to_sleep(data), data);
+		ft_usleep(time_to_sleep, data);
 		print_state(THINKING, data);
 	}
 	// safe_pthread(JOIN, &monitor, NULL, data);
@@ -100,11 +104,36 @@ static void	*monitoring_death(void *arg)
 	data = (t_data *)arg;
 	// printf("waiting for a_philo_died sem to signal...\n");
 	safe_sem(SEM_WAIT, data->a_philo_died, data);
-	// printf("end_sim sem is signaling from parent...\n");
+	data->someone_died = true;
 	// safe_sem(SEM_POST, data->end_sim, data);
+	// printf("killing all processes\n");
+	// if (!data->all_philos_full)
+	// {
+		i = -1;
+		while (++i < data->philo_count)
+			kill(data->pids[i], SIGTERM);
+			// printf("%d being terminated, kill() returns:%d\n", i + 1, kill(data->pids[i], SIGTERM));
+	// }
+	return (NULL);
+}
+
+static void	*monitoring_full(void *arg)
+{
+	t_data	*data;
+	int		i;
+
+	data = (t_data *)arg;
 	i = -1;
-	while (++i < data->philo_count)
-		kill(data->pids[i], SIGINT);
+	while (++i < data->philo_count && !data->someone_died)
+		safe_sem(SEM_WAIT, data->a_philo_full, data);	
+	// printf("someone died:%d\n", data->someone_died);
+	if (!data->someone_died)
+	{
+		i = -1;
+		while (++i < data->philo_count)
+			kill(data->pids[i], SIGTERM);
+			// printf("%d being terminated, kill() returns:%d\n", i + 1, kill(data->pids[i], SIGTERM));
+	}
 	return (NULL);
 }
 
@@ -113,6 +142,9 @@ void	simulate(t_data *data)
 	int		i;
 	// pid_t	*pids;
 	pthread_t	monitor_death;
+	pthread_t	monitor_full;
+	int		status;
+	// int		full_counter;
 
 	data->pids = (pid_t *)malloc(sizeof(pid_t) * data->philo_count);
 	if (data->pids == NULL)
@@ -136,15 +168,19 @@ void	simulate(t_data *data)
 		if (data->pids[i] == 0)
 		{
 			data->id = i + 1;
+			// printf("philo %d starting routine...\n", data->id);
 			routine(data);
 		}
 	}
 	safe_pthread(CREATE, &monitor_death, &monitoring_death, data);
+	safe_pthread(CREATE, &monitor_full, &monitoring_full, data);
 	safe_pthread(DETACH, &monitor_death, NULL, data);
+	safe_pthread(DETACH, &monitor_full, NULL, data);
 	i = -1;
+	// full_counter = 0;
 	while (++i < data->philo_count)
 	{
-		if (waitpid(data->pids[i], NULL, 0) == -1)
+		if (waitpid(data->pids[i], &status, 0) == -1)
 		{
 			ft_putstr_fd(ERR_WAITPID, 2);
 			unlink_all_sems();
@@ -152,8 +188,15 @@ void	simulate(t_data *data)
 			exit(EXIT_FAILURE);
 		}
 		// printf("philo %d exiting...\n", i + 1);
+		// if (WEXITED)
+		// 	full_counter++;
 	}
+	// if (full_counter == data->philo_count)
+	// 	data->all_philos_full = true;
 	safe_sem(SEM_POST, data->a_philo_died, data);
+	i = -1;
+	while (++i < data->philo_count)
+		safe_sem(SEM_POST, data->a_philo_full, data);
 	// safe_pthread(JOIN, &monitor_death, monitoring_death, data);
 	free(data->pids);
 }

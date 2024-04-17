@@ -18,7 +18,7 @@ t_sim_state	get_sim_state(t_data *data)
 
 	// printf("%d before sem wait for get_sim_state\n", data->id);
 	safe_sem(SEM_WAIT, data->sem, data);
-	ret = data->sim_state;	
+	ret = data->sim_state;
 	// printf("sim state:%d\n", ret);
 	// printf("%d before sem post for get_sim_state\n", data->id);	
 	safe_sem(SEM_POST, data->sem, data);

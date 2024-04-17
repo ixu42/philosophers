@@ -26,7 +26,7 @@ static t_bool	philo_died(t_data *data, long time_to_die)
 	if (current_time - last_meal_time > time_to_die)
 	{
 		// printf("current_time:%ld\n", current_time);
-		// printf("last_meal_time:%ld\n", last_meal_time);
+		// printf("last_meal_time:%ld\n", last_meal_time / 1000 - data->sim_start_time);
 		// printf("id:%d\n", data->id);
 		// printf("diff:%ld\n", current_time - last_meal_time);
 		// printf("time_to_die:%ld\n", time_to_die);
@@ -50,6 +50,8 @@ static t_bool	philo_full(t_data *data)
 	if (meals_eaten < data->meals_limit)
 		return (false);
 	set_sim_state(data, PHILO_FULL);
+	safe_sem(SEM_POST, data->a_philo_full, data);
+	// safe_sem(SEM_POST, data->a_philo_died, data);
 	return (true);
 }
 

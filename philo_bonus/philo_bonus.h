@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:06:59 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/16 13:10:56 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/17 17:17:22 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,9 @@ struct s_data
 	sem_t		*write;
 	sem_t		*sem;
 	sem_t		*a_philo_died;
+	sem_t		*a_philo_full;
+	// t_bool		all_philos_full;
+	t_bool		someone_died;
 	// sem_t		*end_sim;
 };
 
@@ -159,7 +162,7 @@ void	*monitoring(void *arg);
 void	*monitoring_end_sim(void *arg);
 
 // eat_bonus.c
-void	eat(t_data *data);
+void	eat(t_data *data, long time_to_eat);
 void	eat_alone(t_data *data);
 
 // print_bonus.c
@@ -169,7 +172,7 @@ void	print_state(t_state state, t_data *data);
 	the functions to prevent data races for read and write operations
 	for data accessed by multiple threads concurrently.
 */
-// getter.c
+// getters.c
 t_sim_state	get_sim_state(t_data *data);
 long	get_meals_eaten(t_data *data);
 long	get_last_meal_time(t_data *data);

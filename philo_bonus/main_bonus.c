@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:08:29 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/17 10:28:09 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/17 13:37:17 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ void	close_all_sems(t_data *data)
 	safe_sem(SEM_CLOSE, data->write, data);
 	safe_sem(SEM_CLOSE, data->sem, data);
 	safe_sem(SEM_CLOSE, data->a_philo_died, data);
+	safe_sem(SEM_CLOSE, data->a_philo_full, data);
 	// safe_sem(SEM_CLOSE, data->end_sim, data);
 }
 
@@ -55,6 +56,7 @@ void	unlink_all_sems(void)
 	sem_unlink("/write");
 	sem_unlink("/sem");
 	sem_unlink("/a_philo_died");
+	sem_unlink("/a_philo_full");
 	// sem_unlink("/end_sim");
 }
 

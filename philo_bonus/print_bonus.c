@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 14:34:35 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/17 10:12:12 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/17 16:16:08 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ void	print_state(t_state state, t_data *data)
 	// printf("%d time:%ld\n", data->id, time);
 	sim_state = get_sim_state(data);
 	// printf("%d sim_state in print state:%d\n", data->id, sim_state);
-	if (state == DIED && sim_state == PHILO_DIED)
+	// if (state == DIED && sim_state == PHILO_DIED)
+	if (state == DIED)
 	{
 		safe_sem(SEM_WAIT, data->write, data);
 		if (DEBUG_MODE)
