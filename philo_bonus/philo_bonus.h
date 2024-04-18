@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:06:59 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/18 17:13:23 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/18 17:31:18 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@
 // INT_MAX, INT_MIN
 # include <limits.h>
 
-# define USAGE "Usage: ./philo <num_of_philos> <time_to_die> <time_to_eat> \
+# define USAGE "Usage: ./philo_bonus <num_of_philos> <time_to_die> <time_to_eat> \
 <time_to_sleep> [num_of_times_each_philo_must_eat]\n"
 # define ERR_MALLOC "malloc() error\n"
 # define ERR_FORK "fork() error\n"
