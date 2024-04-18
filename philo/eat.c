@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 17:07:39 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/13 15:04:07 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/18 17:26:11 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ int	eat_alone(t_philo *philo)
 {
 	if (print_state(TOOK_1ST_FORK, philo))
 		return (end_sim(philo, DROP_NONE));
-	if (ft_usleep(get_time_to_die(philo->data), philo->data))
+	if (ft_usleep(get_time_to_die(philo->data) + 2000, philo->data))
 		return (end_sim(philo, DROP_NONE));
 	return (0);
 }

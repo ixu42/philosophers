@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 14:45:29 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/14 17:59:00 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/18 17:26:57 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,11 @@ void	*monitoring(void *arg)
 		}
 		if (a_philo_died || all_philos_full)
 			break ;
+		if (ft_usleep(1000, data))
+		{
+			set_end_sim(data);
+			return (NULL);
+		}
 	}
 	return (NULL);
 }

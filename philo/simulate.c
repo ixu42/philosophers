@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 12:03:34 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/13 15:00:25 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/18 17:28:45 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static int	arrange_eating(t_philo *philo)
 	{
 		if (print_state(THINKING, philo))
 			return (1);
-		if (ft_usleep(get_time_to_eat(philo) / 2, philo->data))
+		if (ft_usleep(get_time_to_eat(philo) - 1000, philo->data))
 			return (1);
 	}
 	return (0);
