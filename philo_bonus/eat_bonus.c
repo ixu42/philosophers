@@ -63,5 +63,5 @@ int	eat(t_data *data, long time_to_eat)
 void	eat_alone(t_data *data)
 {
 	print_state(TOOK_1ST_FORK, data);
-	ft_usleep(get_time_to_die(data) + 1000, data);
+	ft_usleep(get_time_to_die(data) + 2000, data);
 }
