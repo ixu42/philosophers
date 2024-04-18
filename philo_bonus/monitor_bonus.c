@@ -6,11 +6,23 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 14:51:27 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/18 17:08:11 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/18 21:10:22 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
+
+t_bool	other_philo_died(t_data *data)
+{
+	sem_t	*death;
+
+	death = sem_open("/death", O_RDONLY, 0);
+	if (death == SEM_FAILED)
+		return (false);
+	sem_handler(SEM_CLOSE, death);
+	set_sim_state(data, OTHER_PHILO_DIED);
+	return (true);
+}
 
 static t_bool	philo_died(t_data *data, long time_to_die)
 {
@@ -19,11 +31,22 @@ static t_bool	philo_died(t_data *data, long time_to_die)
 
 	if (get_meals_eaten(data) >= data->meals_limit)
 		return (false);
-	current_time = get_time(MICROSEC, data);
+	current_time = get_time(MICROSEC);
 	last_meal_time = get_last_meal_time(data);
 	if (current_time - last_meal_time > time_to_die)
 		return (true);
 	return (false);
+}
+
+static void	handle_death(t_data *data)
+{
+	sem_t	*death;
+
+	death = sem_open("/death", O_CREAT, 0644, 0);
+	sem_handler(SEM_CLOSE, death);
+	set_sim_state(data, PHILO_DIED);
+	print_state(DIED, data);
+	sem_handler(SEM_POST, data->write);
 }
 
 static t_bool	philo_full(t_data *data)
@@ -39,47 +62,30 @@ static t_bool	philo_full(t_data *data)
 	return (true);
 }
 
-t_bool	someone_died(t_data *data)
-{
-	sem_t	*death;
-
-	death = sem_open("/death", O_RDONLY, 0);
-	if (death == SEM_FAILED)
-		return (false);
-	safe_sem(SEM_CLOSE, death, data);
-	set_sim_state(data, OTHER_PHILO_DIED);
-	return (true);
-}
-
 void	*monitoring(void *arg)
 {
 	t_data	*data;
 	long	time_to_die;
-	sem_t	*death;
 
 	data = (t_data *)arg;
 	time_to_die = get_time_to_die(data);
 	while (!sim_should_end(data))
 	{
-		if (someone_died(data))
+		if (other_philo_died(data))
 			break ;
 		if (philo_died(data, time_to_die))
 		{
-			safe_sem(SEM_WAIT, data->write, data);
-			if (!someone_died(data))
+			sem_handler(SEM_WAIT, data->write);
+			if (!other_philo_died(data))
 			{
-				death = sem_open("/death", O_CREAT, 0644, 0);
-				safe_sem(SEM_CLOSE, death, data);
-				set_sim_state(data, PHILO_DIED);
-				print_state(DIED, data);
-				safe_sem(SEM_POST, data->write, data);
+				handle_death(data);
 				break ;
 			}
-			safe_sem(SEM_POST, data->write, data);			
+			sem_handler(SEM_POST, data->write);
 		}
 		if (philo_full(data))
 			break ;
-		ft_usleep(1000, data);
+		ft_usleep(1000);
 	}
 	return (NULL);
 }

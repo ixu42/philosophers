@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:06:59 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/18 17:31:18 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/18 21:58:44 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 # include <unistd.h>
 
 // waitpid
-#include <sys/wait.h>
+# include <sys/wait.h>
 
 // pthread_create, pthread_join
 # include <pthread.h>
@@ -49,8 +49,8 @@
 # define ERR_MALLOC "malloc() error\n"
 # define ERR_FORK "fork() error\n"
 # define ERR_WAITPID "waitpid() error\n"
-# define ERR_CREATE "pthread_create() error\n"
-# define ERR_JOIN "pthread_join() error\n"
+# define ERR_PTHREAD_CREATE "pthread_create() error\n"
+# define ERR_PTHREAD_JOIN "pthread_join() error\n"
 # define ERR_SEM_OPEN "sem_open() error\n"
 # define ERR_SEM_WAIT "sem_wait() error\n"
 # define ERR_SEM_POST "sem_post() error\n"
@@ -58,7 +58,7 @@
 # define ERR_GETTIMEOFDAY "gettimeofday() error\n"
 # define ERR_USLEEP "usleep() error\n"
 
-// only implemented colors for the bonus part
+// for debugging purpose
 # define DEBUG_MODE 0
 # define GREEN "\033[0;32m"
 # define RED "\033[0;31m"
@@ -98,13 +98,9 @@ typedef enum e_time_unit
 
 typedef enum e_func
 {
-	CREATE,
-	JOIN,
 	SEM_WAIT,
 	SEM_POST,
 	SEM_CLOSE,
-	GETTIMEOFDAY,
-	USLEEP
 }	t_func;
 
 struct s_data
@@ -126,62 +122,57 @@ struct s_data
 };
 
 // utils_bonus.c
-int		ft_isdigit(int c);
-size_t	ft_strlen(const char *s);
-int		ft_putstr_fd(char *s, int fd);
-long	get_time(t_time_unit time_unit, t_data *data);
-void	ft_usleep(long microsec, t_data *data);
+int			ft_isdigit(int c);
+size_t		ft_strlen(const char *s);
+int			ft_putstr_fd(char *s, int fd);
+char		*ft_strjoin(char const *s1, char const *s2);
 
 // ft_atol_bonus.c
-long	ft_atol(char *str);
+long		ft_atol(char *str);
 
 // ft_itoa_bonus.c
-char	*ft_itoa(int n);
+char		*ft_itoa(int n);
 
-// ft_strjoin_bonus.c
-char	*ft_strjoin(char const *s1, char const *s2);
+// time_bonus.c
+long		get_time(t_time_unit time_unit);
+void		ft_usleep(long microsec);
 
-// semaphore.c
-void	init_semaphores(t_data *data);
-void	close_all_sems(t_data *data);
-void	unlink_all_sems(void);
+// semaphore_bonus.c
+void		init_semaphores(t_data *data);
+void		close_all_sems(t_data *data);
+void		unlink_all_sems(void);
+void		sem_handler(t_func func, sem_t *sem);
 
 // simulate_bonus.c
-t_bool	sim_should_end(t_data *data);
-int		simulate(t_data *data);
+int			simulate(t_data *data);
+
+// routine_bonus.c
+void		clean_exit(char *err_msg, t_data *data);
+void		init_philo(t_data *data, int i);
+void		arrange_eating(t_data *data, long time_to_eat);
+t_bool		sim_should_end(t_data *data);
+void		routine(t_data *data, int i);
 
 // monitoring_bonus.c
-t_bool	someone_died(t_data *data);
-void	*monitoring(void *arg);
+t_bool		other_philo_died(t_data *data);
+void		*monitoring(void *arg);
 
 // eat_bonus.c
-int		eat(t_data *data, long time_to_eat);
-void	eat_alone(t_data *data);
+int			eat(t_data *data);
+void		eat_alone(t_data *data);
 
 // print_bonus.c
-void	print_state(t_state state, t_data *data);
+void		print_state(t_state state, t_data *data);
 
-/*
-	the functions to prevent data races for read and write operations
-	for data accessed by multiple threads concurrently.
-*/
-// getters.c
+// getters_bonus.c
 t_sim_state	get_sim_state(t_data *data);
-long	get_meals_eaten(t_data *data);
-long	get_last_meal_time(t_data *data);
-long	get_philo_count(t_data *data);
-long	get_time_to_eat(t_data *data);
-long	get_time_to_sleep(t_data *data);
-long	get_time_to_die(t_data *data);
-// setters.c
-void	set_last_meal_time(t_data *data);
-void	increment_meal_counter(t_data *data);
-void	set_sim_state(t_data *data, t_sim_state sim_state);
+long		get_meals_eaten(t_data *data);
+long		get_last_meal_time(t_data *data);
+long		get_time_to_die(t_data *data);
 
-// safe_funcs_bonus.c
-void	safe_exit(char *err_msg, t_data *data, t_func func);
-void	safe_pthread(t_func func, pthread_t *thread,
-		void *(*routine)(void *), t_data *data);
-void	safe_sem(t_func func, sem_t *sem, t_data *data);
+// setters_bonus.c
+void		set_last_meal_time(t_data *data);
+void		increment_meal_counter(t_data *data);
+void		set_sim_state(t_data *data, t_sim_state sim_state);
 
 #endif

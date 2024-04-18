@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:08:29 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/18 16:56:39 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/18 19:51:02 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ int	main(int argc, char **argv)
 	if (simulate(&data))
 	{
 		clean_all(&data);
-		return (1);	
+		return (1);
 	}
 	clean_all(&data);
 	return (0);

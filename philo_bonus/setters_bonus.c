@@ -12,23 +12,23 @@
 
 #include "philo_bonus.h"
 
-void	increment_meal_counter(t_data *data)
-{
-	safe_sem(SEM_WAIT, data->sem, data);
-	data->meals_eaten++;
-	safe_sem(SEM_POST, data->sem, data);
-}
-
 void	set_last_meal_time(t_data *data)
 {
-	safe_sem(SEM_WAIT, data->sem, data);
-	data->last_meal_time = get_time(MICROSEC, data);
-	safe_sem(SEM_POST, data->sem, data);
+	sem_handler(SEM_WAIT, data->sem);
+	data->last_meal_time = get_time(MICROSEC);
+	sem_handler(SEM_POST, data->sem);
+}
+
+void	increment_meal_counter(t_data *data)
+{
+	sem_handler(SEM_WAIT, data->sem);
+	data->meals_eaten++;
+	sem_handler(SEM_POST, data->sem);
 }
 
 void	set_sim_state(t_data *data, t_sim_state sim_state)
 {
-	safe_sem(SEM_WAIT, data->sem, data);
+	sem_handler(SEM_WAIT, data->sem);
 	data->sim_state = sim_state;
-	safe_sem(SEM_POST, data->sem, data);
+	sem_handler(SEM_POST, data->sem);
 }

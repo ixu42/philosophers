@@ -14,20 +14,20 @@
 
 static void	drop_forks(t_data *data)
 {
-	safe_sem(SEM_POST, data->forks, data);
-	safe_sem(SEM_POST, data->forks, data);
+	sem_handler(SEM_POST, data->forks);
+	sem_handler(SEM_POST, data->forks);
 }
 
 static int	take_forks(t_data *data)
 {
-	safe_sem(SEM_WAIT, data->forks, data);
+	sem_handler(SEM_WAIT, data->forks);
 	print_state(TOOK_1ST_FORK, data);
 	if (sim_should_end(data))
 	{
-		safe_sem(SEM_POST, data->forks, data);
+		sem_handler(SEM_POST, data->forks);
 		return (1);
 	}
-	safe_sem(SEM_WAIT, data->forks, data); // drop first fork
+	sem_handler(SEM_WAIT, data->forks);
 	print_state(TOOK_2ND_FORK, data);
 	if (sim_should_end(data))
 	{
@@ -37,19 +37,19 @@ static int	take_forks(t_data *data)
 	return (0);
 }
 
-static void	eating(t_data *data, long time_to_eat)
+static void	eating(t_data *data)
 {
 	set_last_meal_time(data);
 	print_state(EATING, data);
-	ft_usleep(time_to_eat, data);
+	ft_usleep(data->time_to_eat);
 	increment_meal_counter(data);
 }
 
-int	eat(t_data *data, long time_to_eat)
+int	eat(t_data *data)
 {
 	if (take_forks(data))
 		return (1);
-	eating(data, time_to_eat);
+	eating(data);
 	drop_forks(data);
 	return (0);
 }
@@ -63,5 +63,5 @@ int	eat(t_data *data, long time_to_eat)
 void	eat_alone(t_data *data)
 {
 	print_state(TOOK_1ST_FORK, data);
-	ft_usleep(get_time_to_die(data) + 2000, data);
+	ft_usleep(get_time_to_die(data) + 2000);
 }
