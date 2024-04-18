@@ -19,27 +19,32 @@ static void	drop_forks(t_data *data)
 	// printf("%d has dropped both forks\n", data->id);
 }
 
-static void	take_forks(t_data *data)
+static int	take_forks(t_data *data)
 {
 	// printf("%d before taking first fork\n", data->id);
 	safe_sem(SEM_WAIT, data->forks, data);
 	// printf("%d has taken first fork\n", data->id);
 	print_state(TOOK_1ST_FORK, data);
-	// if (sim_should_end(data))
-	// {
-	// 	// printf("%d sim should end!\n", data->id);
-	// 	safe_sem(SEM_POST, data->forks, data);
-	// 	// printf("%d has dropped first fork\n", data->id);
-	// 	exit(EXIT_SUCCESS);
-	// }
+	if (sim_should_end(data))
+	{
+		// printf("%d sim should end!\n", data->id);
+		safe_sem(SEM_POST, data->forks, data);
+		return (1);
+		// printf("%d has dropped first fork\n", data->id);
+		// close_all_sems(data);
+		// exit(EXIT_SUCCESS);
+	}
 	safe_sem(SEM_WAIT, data->forks, data); // drop first fork
 	print_state(TOOK_2ND_FORK, data);
 	// printf("%d has taken second fork\n", data->id);
-	// if (sim_should_end(data))
-	// {
-	// 	drop_forks(data);
-	// 	exit(EXIT_SUCCESS);
-	// }
+	if (sim_should_end(data))
+	{
+		drop_forks(data);
+		return (1);
+		// close_all_sems(data);
+		// exit(EXIT_SUCCESS);
+	}
+	return (0);
 }
 
 static void	eating(t_data *data, long time_to_eat)
@@ -54,13 +59,15 @@ static void	eating(t_data *data, long time_to_eat)
 	// printf("%d after incrementing meals counter\n", data->id);
 }
 
-void	eat(t_data *data, long time_to_eat)
+int	eat(t_data *data, long time_to_eat)
 {
-	take_forks(data);
+	if (take_forks(data))
+		return (1);
 	eating(data, time_to_eat);
 	// printf("%d has just eaten\n", data->id);
 	drop_forks(data);
 	// printf("%d has drop forks\n", data->id);
+	return (0);
 }
 
 /*

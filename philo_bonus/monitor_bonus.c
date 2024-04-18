@@ -30,10 +30,10 @@ static t_bool	philo_died(t_data *data, long time_to_die)
 		// printf("id:%d\n", data->id);
 		// printf("diff:%ld\n", current_time - last_meal_time);
 		// printf("time_to_die:%ld\n", time_to_die);
-		set_sim_state(data, PHILO_DIED);
-		print_state(DIED, data);
+		// set_sim_state(data, PHILO_DIED);
+		// print_state(DIED, data);
 		// printf("%d died and signals\n", data->id);
-		safe_sem(SEM_POST, data->a_philo_died, data);
+		// safe_sem(SEM_POST, data->a_philo_died, data);
 		// printf("%d died and after signaling\n", data->id);
 		return (true);
 	}
@@ -50,12 +50,12 @@ static t_bool	philo_full(t_data *data)
 	if (meals_eaten < data->meals_limit)
 		return (false);
 	set_sim_state(data, PHILO_FULL);
-	safe_sem(SEM_POST, data->a_philo_full, data);
+	// safe_sem(SEM_POST, data->a_philo_full, data);
 	// safe_sem(SEM_POST, data->a_philo_died, data);
 	return (true);
 }
 
-void	*monitoring(void *arg)
+/* void	*monitoring(void *arg)
 {
 	t_data	*data;
 	long	time_to_die;
@@ -64,12 +64,60 @@ void	*monitoring(void *arg)
 	time_to_die = get_time_to_die(data);
 	while (true)
 	{
-		if (philo_died(data, time_to_die) || philo_full(data))
+		// if (philo_died(data, time_to_die) || philo_full(data))
+		// 	break ;
+		if (get_sim_state(data) != ACTIVE)
 			break ;
-		// if (get_sim_state(data) != ACTIVE)
-			// break ;
-		// philo_died(data, time_to_die);
-		// philo_full(data);
+		philo_died(data, time_to_die);
+		philo_full(data);
+	}
+	// printf("%d monitor thread terminating...\n", data->id);
+	return (NULL);
+} */
+
+t_bool	someone_died(t_data *data)
+{
+	sem_t	*death;
+
+	death = sem_open("/death", O_RDONLY, 0);
+	if (death == SEM_FAILED)
+		return (false);
+	safe_sem(SEM_CLOSE, death, data);
+	set_sim_state(data, OTHER_PHILO_DIED);
+	return (true);
+}
+
+void	*monitoring(void *arg)
+{
+	t_data	*data;
+	long	time_to_die;
+	sem_t	*death;
+
+	data = (t_data *)arg;
+	time_to_die = get_time_to_die(data);
+	while (!sim_should_end(data))
+	{
+		// printf("checking if someone else died...\n");
+		if (someone_died(data))
+			break ;
+		// printf("checking if the philo died...\n");
+		if (philo_died(data, time_to_die))
+		{
+			safe_sem(SEM_WAIT, data->write, data);
+			if (!someone_died(data))
+			{
+				death = sem_open("/death", O_CREAT, 0644, 0);
+				safe_sem(SEM_CLOSE, death, data);
+				set_sim_state(data, PHILO_DIED);
+				print_state(DIED, data);
+				safe_sem(SEM_POST, data->write, data);
+				break ;
+			}
+			safe_sem(SEM_POST, data->write, data);			
+		}
+		// printf("checking if the philo full...\n");
+		if (philo_full(data))
+			break ;
 	}
 	// printf("%d monitor thread terminating...\n", data->id);
 	return (NULL);

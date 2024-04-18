@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:08:29 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/17 13:37:17 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/18 10:32:04 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,24 +40,22 @@ static void	validate_input(int argc, char **argv)
 	}
 }
 
-void	close_all_sems(t_data *data)
+static void	init_data(t_data *data, char **argv)
 {
-	safe_sem(SEM_CLOSE, data->forks, data);
-	safe_sem(SEM_CLOSE, data->write, data);
-	safe_sem(SEM_CLOSE, data->sem, data);
-	safe_sem(SEM_CLOSE, data->a_philo_died, data);
-	safe_sem(SEM_CLOSE, data->a_philo_full, data);
-	// safe_sem(SEM_CLOSE, data->end_sim, data);
-}
-
-void	unlink_all_sems(void)
-{
-	sem_unlink("/forks");
-	sem_unlink("/write");
-	sem_unlink("/sem");
-	sem_unlink("/a_philo_died");
-	sem_unlink("/a_philo_full");
-	// sem_unlink("/end_sim");
+	data->meals_eaten = 0;
+	data->last_meal_time = INT_MAX;
+	data->philo_count = ft_atol(argv[1]);
+	data->time_to_die = ft_atol(argv[2]) * 1000;
+	data->time_to_eat = ft_atol(argv[3]) * 1000;
+	data->time_to_sleep = ft_atol(argv[4]) * 1000;
+	if (argv[5] != NULL)
+		data->meals_limit = ft_atol(argv[5]);
+	else
+		data->meals_limit = INT_MAX;
+	data->sim_state = ACTIVE;
+	data->all_philos_full = false;
+	data->someone_died = false;
+	init_semaphores(data);
 }
 
 static void	clean_all(t_data *data)
@@ -75,7 +73,8 @@ int	main(int argc, char **argv)
 	// printf("before init_data()\n");
 	init_data(&data, argv);
 	// printf("before simulate()\n");
-	simulate(&data);
+	if (simulate(&data))
+		return (1);
 	// printf("before clean_all()\n");
 	clean_all(&data);
 	// printf("before exit main\n");

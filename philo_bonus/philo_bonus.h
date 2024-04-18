@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:06:59 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/17 17:17:22 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/18 10:32:39 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,8 @@
 # define ERR_FORK "fork() error\n"
 # define ERR_WAITPID "waitpid() error\n"
 # define ERR_CREATE "pthread_create() error\n"
-// # define ERR_JOIN "pthread_join() error\n"
-# define ERR_DETACH "pthread_detach() error\n"
+# define ERR_JOIN "pthread_join() error\n"
+# define ERR_DETACH "pthread_detach() error\n" // check if needed
 # define ERR_SEM_OPEN "sem_open() error\n"
 # define ERR_SEM_WAIT "sem_wait() error\n"
 # define ERR_SEM_POST "sem_post() error\n"
@@ -97,8 +97,8 @@ typedef enum e_time_unit
 typedef enum e_func
 {
 	CREATE,
-	// JOIN,
-	DETACH,
+	JOIN,
+	DETACH, // check if needed
 	SEM_WAIT,
 	SEM_POST,
 	SEM_CLOSE,
@@ -130,11 +130,11 @@ struct s_data
 	sem_t		*forks;
 	sem_t		*write;
 	sem_t		*sem;
-	sem_t		*a_philo_died;
-	sem_t		*a_philo_full;
-	// t_bool		all_philos_full;
-	t_bool		someone_died;
+	// sem_t		*a_philo_died;
+	// sem_t		*a_philo_full;
 	// sem_t		*end_sim;
+	t_bool		all_philos_full;
+	t_bool		someone_died;
 };
 
 // utils_bonus.c
@@ -147,22 +147,24 @@ void	ft_usleep(long microsec, t_data *data);
 // ft_atol_bonus.c
 long	ft_atol(char *str);
 
-// init_bonus.c
-void	init_data(t_data *data, char **argv);
-
-// tbd
+// semaphore.c
+void	init_semaphores(t_data *data);
+void	close_all_sems(t_data *data);
 void	unlink_all_sems(void);
 
 // simulate_bonus.c
 t_bool	sim_should_end(t_data *data);
-void	simulate(t_data *data);
+int		simulate(t_data *data);
+
+// tbd
+t_bool	someone_died(t_data *data);
 
 // monitoring_bonus.c
 void	*monitoring(void *arg);
-void	*monitoring_end_sim(void *arg);
+// void	*monitoring_end_sim(void *arg);
 
 // eat_bonus.c
-void	eat(t_data *data, long time_to_eat);
+int		eat(t_data *data, long time_to_eat);
 void	eat_alone(t_data *data);
 
 // print_bonus.c

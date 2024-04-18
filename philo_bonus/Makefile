@@ -27,7 +27,7 @@ RESET := \033[0m
 OBJS_DIR := objs_bonus/
 
 # Source file names
-SRCS := $(addsuffix _bonus.c, main utils ft_atol init simulate \
+SRCS := $(addsuffix _bonus.c, main utils ft_atol semaphore simulate \
 			eat monitor print getters setters safe_funcs)
 
 # Object files with paths
