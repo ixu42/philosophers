@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   semaphore.c                                        :+:      :+:    :+:   */
+/*   semaphore_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/18 10:29:42 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/18 10:33:00 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/18 15:53:21 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,37 +28,17 @@ void	init_semaphores(t_data *data)
 	data->write = sem_open("/write", O_CREAT, 0644, 1);
 	if (data->write == SEM_FAILED)
 		handle_sem_open_error();
-	data->sem = sem_open("/sem", O_CREAT, 0644, 1);
-	if (data->sem == SEM_FAILED)
-		handle_sem_open_error();
-	// data->a_philo_died = sem_open("/a_philo_died", O_CREAT, 0644, 0);
-	// if (data->a_philo_died == SEM_FAILED)
-	// 	handle_sem_open_error();
-	// data->a_philo_full = sem_open("/a_philo_full", O_CREAT, 0644, 0);
-	// if (data->a_philo_full == SEM_FAILED)
-	// 	handle_sem_open_error();
-	// data->end_sim = sem_open("/end_sim", O_CREAT, 0644, 0);
-	// if (data->end_sim == SEM_FAILED)
-	// 	handle_sem_open_error();
 }
 
 void	close_all_sems(t_data *data)
 {
 	safe_sem(SEM_CLOSE, data->forks, data);
 	safe_sem(SEM_CLOSE, data->write, data);
-	safe_sem(SEM_CLOSE, data->sem, data);
-	// safe_sem(SEM_CLOSE, data->a_philo_died, data);
-	// safe_sem(SEM_CLOSE, data->a_philo_full, data);
-	// safe_sem(SEM_CLOSE, data->end_sim, data);
 }
 
 void	unlink_all_sems(void)
 {
 	sem_unlink("/forks");
 	sem_unlink("/write");
-	sem_unlink("/sem");
-	// sem_unlink("/a_philo_died");
-	// sem_unlink("/a_philo_full");
-	// sem_unlink("/end_sim");
 	sem_unlink("/death");
 }

@@ -34,10 +34,8 @@ static void	protect(int status, t_func func, t_data *data)
 	{
 		if (func == CREATE)
 			safe_exit(ERR_CREATE, data, CREATE);
-		else if (func == JOIN) // check if needed
+		else if (func == JOIN)
 			safe_exit(ERR_JOIN, data, JOIN);
-		else if (func == DETACH) // check if needed
-			safe_exit(ERR_DETACH, data, DETACH);
 		else if (func == SEM_WAIT)
 			safe_exit(ERR_SEM_WAIT, data, SEM_WAIT);
 		else if (func == SEM_POST)
@@ -57,10 +55,8 @@ void	safe_pthread(t_func func, pthread_t *thread,
 {
 	if (func == CREATE)
 		protect(pthread_create(thread, NULL, routine, data), func, data);
-	else if (func == JOIN) // check if needed
+	else if (func == JOIN)
 		protect(pthread_join(*thread, NULL), func, data);
-	else if (func == DETACH) // check if needed
-		protect(pthread_detach(*thread), func, data);
 }
 
 /*

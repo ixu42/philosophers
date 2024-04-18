@@ -6,7 +6,7 @@
 /*   By: ixu <ixu@student.hive.fi>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:08:29 by ixu               #+#    #+#             */
-/*   Updated: 2024/04/18 10:32:04 by ixu              ###   ########.fr       */
+/*   Updated: 2024/04/18 16:56:39 by ixu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,6 @@ static void	init_data(t_data *data, char **argv)
 	else
 		data->meals_limit = INT_MAX;
 	data->sim_state = ACTIVE;
-	data->all_philos_full = false;
-	data->someone_died = false;
 	init_semaphores(data);
 }
 
@@ -68,15 +66,13 @@ int	main(int argc, char **argv)
 {
 	t_data	data;
 
-	// printf("before validate_input()\n");
 	validate_input(argc, argv);
-	// printf("before init_data()\n");
 	init_data(&data, argv);
-	// printf("before simulate()\n");
 	if (simulate(&data))
-		return (1);
-	// printf("before clean_all()\n");
+	{
+		clean_all(&data);
+		return (1);	
+	}
 	clean_all(&data);
-	// printf("before exit main\n");
 	return (0);
 }
