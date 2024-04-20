@@ -13,6 +13,32 @@
 #include "philo.h"
 
 /*
+	philo survives, if
+	time_to_eat + time_to_sleep + time_to_think < time_to_die
+	max time_to_think is (time_to_die - time_to_eat - time_to_sleep)
+
+	to improve fairness of allocation of forks when philo_count is odd number,
+	during time_to_think, philo sleeps e.g. half of the max time_to_think so
+	that after waking up they do not immediately take the fork from their neighbor
+	where possible.
+*/
+
+static int	think(t_philo *philo)
+{
+	long	max_time_for_thinking;
+
+	if (get_philo_count(philo->data) % 2 == 0)
+		return (0);
+	max_time_for_thinking = get_time_to_die(philo->data) - \
+							get_time_to_eat(philo) - get_time_to_sleep(philo);
+	if (max_time_for_thinking < 0)
+		max_time_for_thinking = 0;
+	if (ft_usleep(max_time_for_thinking / 2, philo->data))
+		return (1);
+	return (0);
+}
+
+/*
 	if philo->id is an even number, the philo starts by thinking before 
 	entering while loop so that odd numbered philos can eat first 
 	(also works the other way around)
