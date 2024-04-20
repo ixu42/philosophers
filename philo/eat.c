@@ -89,7 +89,7 @@ int	eat_alone(t_philo *philo)
 {
 	if (print_state(TOOK_1ST_FORK, philo))
 		return (end_sim(philo, DROP_NONE));
-	if (ft_usleep(get_time_to_die(philo->data) + 2000, philo->data))
+	if (ft_usleep(get_time_to_die(philo->data), philo->data))
 		return (end_sim(philo, DROP_NONE));
 	return (0);
 }
