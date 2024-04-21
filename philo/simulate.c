@@ -86,6 +86,8 @@ static void	*routine(void *arg)
 			break ;
 		if (print_state(THINKING, philo))
 			break ;
+		if (think(philo))
+			break ;
 	}
 	return (NULL);
 }
